@@ -1031,3 +1031,110 @@ footer { visibility: hidden; }
         display: none;
     }
 }
+
+/* ── Sidebar Navigation Overrides ────────────────────────── */
+[data-testid="stSidebar"] {
+    background-color: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
+}
+
+[data-testid="stSidebarNav"] {
+    background-color: transparent !important;
+}
+
+/* Redesign Streamlit radio menu inside sidebar to look like custom navigation nodes */
+[data-testid="stSidebar"] .stRadio > label {
+    display: none !important;
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.5rem 0;
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 12px !important;
+    color: var(--subtext) !important;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover {
+    background: rgba(124, 58, 237, 0.06) !important;
+    border-color: rgba(124, 58, 237, 0.25) !important;
+    color: var(--text) !important;
+    transform: translateX(4px);
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label[data-checked="true"] {
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.16), rgba(34, 211, 238, 0.04)) !important;
+    border-color: var(--primary) !important;
+    color: var(--text) !important;
+    box-shadow: 
+        0 0 0 1px rgba(124, 58, 237, 0.15) inset,
+        0 8px 24px rgba(124, 58, 237, 0.12) !important;
+    font-weight: 600 !important;
+}
+
+/* Hide radio circle inputs */
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label span[data-testid="stWidgetLabel"] {
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {
+    margin: 0 !important;
+    font-size: 0.85rem !important;
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] input[type="radio"] {
+    display: none !important;
+}
+
+/* ── Custom UI Additions ────────────────────────────────── */
+.coming-soon-card {
+    text-align: center;
+    padding: 5rem 3rem;
+    margin: 3rem auto;
+    max-width: 600px;
+}
+
+.coming-soon-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coming-soon-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke: var(--accent);
+}
+
+.coming-soon-tag {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(34, 211, 238, 0.08);
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(34, 211, 238, 0.18);
+}
+

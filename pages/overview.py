@@ -33,14 +33,14 @@ def apply_plotly_theme(fig: go.Figure) -> None:
             zerolinecolor="rgba(255, 255, 255, 0.15)",
             color="#A1A1AA",
             tickfont=dict(size=10),
-            titlefont=dict(color="#A1A1AA", size=11),
+            title=dict(font=dict(color="#A1A1AA", size=11)),
         ),
         yaxis=dict(
             gridcolor="rgba(255, 255, 255, 0.08)",
             zerolinecolor="rgba(255, 255, 255, 0.15)",
             color="#A1A1AA",
             tickfont=dict(size=10),
-            titlefont=dict(color="#A1A1AA", size=11),
+            title=dict(font=dict(color="#A1A1AA", size=11)),
         ),
     )
 

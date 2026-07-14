@@ -480,6 +480,31 @@ def render_footer():
     )
 
 
+def render_placeholder(title: str, badge: str = "Upcoming Feature") -> None:
+    """Render a premium placeholder card for features in development."""
+    inject_styles()
+    st.markdown(
+        f"""
+        <div class="coming-soon-card glass-card">
+            <span class="coming-soon-tag">{badge}</span>
+            <div class="coming-soon-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+            </div>
+            <h2 style="margin: 0 0 1rem; font-size: 1.75rem; font-weight: 800; color: var(--text);">{title} Workspace</h2>
+            <p style="margin: 0 auto; max-width: 420px; font-size: 0.95rem; line-height: 1.6; color: var(--subtext);">
+                This space is reserved for Phase 3 advanced extensions. 
+                InsightFlow AI will connect specialized intelligence models to automate deep business recommendations here.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
 def render_landing_page():
     """Assemble and display the full landing page."""
     inject_styles()
@@ -513,23 +538,50 @@ def main():
     )
 
     # Sidebar navigation options
-    selected_page = st.sidebar.radio(
-        "Navigation",
-        options=["Home Page", "Upload Dataset", "Dataset Overview"],
-        index=["landing", "upload", "overview"].index(st.session_state["current_page"]),
-        label_visibility="collapsed"
-    )
+    navigation_options = [
+        "Home Page",
+        "Dashboard",
+        "Upload",
+        "Overview",
+        "Visual Analytics",
+        "AI Insights (placeholder)",
+        "Forecasting (placeholder)",
+        "Reports (placeholder)",
+        "Settings"
+    ]
 
     page_map = {
         "Home Page": "landing",
-        "Upload Dataset": "upload",
-        "Dataset Overview": "overview"
+        "Dashboard": "dashboard",
+        "Upload": "upload",
+        "Overview": "overview",
+        "Visual Analytics": "visual_analytics",
+        "AI Insights (placeholder)": "ai_insights",
+        "Forecasting (placeholder)": "forecasting",
+        "Reports (placeholder)": "reports",
+        "Settings": "settings"
     }
+
+    # Safe lookup for index
+    current = st.session_state["current_page"]
+    reverse_map = {v: k for k, v in page_map.items()}
+    selected_option = reverse_map.get(current, "Home Page")
+    
+    selected_page = st.sidebar.radio(
+        "Navigation",
+        options=navigation_options,
+        index=navigation_options.index(selected_option),
+        label_visibility="collapsed"
+    )
     st.session_state["current_page"] = page_map[selected_page]
 
     # Conditionally render the appropriate page
     if st.session_state["current_page"] == "landing":
         render_landing_page()
+    elif st.session_state["current_page"] == "dashboard":
+        inject_styles()
+        from pages import dashboard
+        dashboard.render()
     elif st.session_state["current_page"] == "upload":
         inject_styles()
         from pages import upload
@@ -538,6 +590,18 @@ def main():
         inject_styles()
         from pages import overview
         overview.render()
+    elif st.session_state["current_page"] == "visual_analytics":
+        inject_styles()
+        from pages import visual_analytics
+        visual_analytics.render()
+    elif st.session_state["current_page"] == "ai_insights":
+        render_placeholder("AI Insights")
+    elif st.session_state["current_page"] == "forecasting":
+        render_placeholder("Forecasting")
+    elif st.session_state["current_page"] == "reports":
+        render_placeholder("Reports")
+    elif st.session_state["current_page"] == "settings":
+        render_placeholder("Settings", badge="Configuration")
 
 
 if __name__ == "__main__":
