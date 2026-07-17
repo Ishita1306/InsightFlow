@@ -74,12 +74,12 @@ def render_hero():
             col_btn1, col_btn2 = st.columns([1, 1])
             with col_btn1:
                 st.markdown('<div class="hero-btn-primary-wrapper"></div>', unsafe_allow_html=True)
-                if st.button("Get Started", key="hero_get_started", use_container_width=True):
+                if st.button("Get Started", key="hero_get_started", width="stretch"):
                     st.session_state["current_page"] = "upload"
                     st.rerun()
             with col_btn2:
                 st.markdown('<div class="hero-btn-secondary-wrapper"></div>', unsafe_allow_html=True)
-                if st.button("View Demo", key="hero_view_demo", use_container_width=True):
+                if st.button("View Demo", key="hero_view_demo", width="stretch"):
                     st.session_state["current_page"] = "dashboard"
                     st.rerun()
 
