@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded');
 
 :root {
     --bg: #0B0F19;
@@ -42,6 +46,11 @@ html, body, [class*="css"] {
     padding-top: 1.25rem;
     padding-bottom: 0;
     max-width: 1200px;
+}
+
+/* Explicitly remove Streamlit's default main container padding-bottom on the landing page */
+.main:has(.hero-section-marker) .block-container {
+    padding-bottom: 0 !important;
 }
 
 #MainMenu { visibility: hidden; }
@@ -739,13 +748,23 @@ footer { visibility: hidden; }
 /* ── Tech stack ───────────────────────────────────────── */
 .tech-section {
     text-align: center;
+    height: auto !important;
+    min-height: auto !important;
+    margin-bottom: 5rem !important; /* ~80px spacing */
+    padding-bottom: 0 !important;
+}
+
+.tech-section .section-subtitle {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .tech-grid {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
     margin-top: 2.5rem;
 }
 
@@ -1340,4 +1359,410 @@ footer { visibility: hidden; }
     margin-bottom: 1.5rem;
     border: 1px solid rgba(34, 211, 238, 0.18);
 }
+
+
+/* ── REDESIGN ADDITIONS ────────────────────────────────── */
+
+/* Typography Rules */
+html, body, .stApp, .stMarkdown, p, label, input, select, textarea {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Explicit Material Icons & Symbols Restoration */
+.material-icons, 
+.material-icons-outlined, 
+.material-symbols-outlined,
+.material-symbols-rounded,
+[class*="material-icons"],
+[class*="material-symbols"],
+[data-testid="InputIconButton"],
+[data-testid="InputIconButton"] button,
+[data-testid="InputIconButton"] span,
+button[aria-label="Show password"],
+button[aria-label="Hide password"] {
+    font-family: 'Material Icons', 'Material Icons Outlined', 'Material Symbols Outlined', 'Material Symbols Rounded' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+    word-wrap: normal !important;
+    direction: ltr !important;
+    -webkit-font-feature-settings: 'liga' !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+h1, h2, h3, h4, .section-title {
+    font-weight: 700 !important;
+    letter-spacing: -0.03em !important;
+}
+
+p, span, label, .section-subtitle {
+    font-weight: 400 !important;
+}
+
+/* Global Card Styling overrides */
+.glass-card {
+    background: var(--card) !important;
+    border-radius: 18px !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.35) !important;
+}
+
+/* KPI Cards overrides */
+.kpi-card {
+    padding: 1.5rem !important;
+}
+
+.kpi-card:hover {
+    transform: scale(1.02) translateY(-4px) !important;
+}
+
+/* Streamlit Button Restyling */
+div[data-testid="stButton"] button[kind="primary"] {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.25rem !important;
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.15) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+div[data-testid="stButton"] button[kind="primary"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.35) !important;
+    opacity: 0.95 !important;
+}
+
+div[data-testid="stButton"] button[kind="secondary"] {
+    background: transparent !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    font-weight: 500 !important;
+    padding: 0.6rem 1.25rem !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+div[data-testid="stButton"] button[kind="secondary"]:hover {
+    background: var(--surface) !important;
+    border-color: var(--primary) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Top Navbar layout and button styling */
+[data-testid="element-container"]:has(.top-nav-marker) + [data-testid="element-container"] button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 38px !important;
+    border-radius: 999px !important;
+    border: 1px solid var(--border) !important;
+    background: var(--card) !important;
+    color: var(--text) !important;
+    transition: all 0.2s ease-in-out !important;
+    padding: 0 1rem !important;
+}
+
+[data-testid="element-container"]:has(.top-nav-marker) + [data-testid="element-container"] button:hover {
+    border-color: var(--primary) !important;
+    background: var(--surface) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.15) !important;
+}
+
+/* Sun/Moon Sliding Switch */
+[data-testid="element-container"]:has(.top-nav-marker[data-type="theme-toggle"]) + [data-testid="element-container"] button {
+    width: 64px !important;
+    padding: 0 !important;
+    position: relative !important;
+    background: var(--surface) !important;
+}
+
+[data-testid="element-container"]:has(.top-nav-marker[data-type="theme-toggle"]) + [data-testid="element-container"] button::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--primary);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(108, 99, 255, 0.4);
+}
+
+[data-testid="element-container"]:has(.top-nav-marker[data-type="theme-toggle"][data-theme="light"]) + [data-testid="element-container"] button::before {
+    transform: translateX(26px);
+}
+
+[data-testid="element-container"]:has(.top-nav-marker[data-type="theme-toggle"]) + [data-testid="element-container"] button::after {
+    content: '🌙   ☀️';
+    font-size: 0.85rem;
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+}
+
+/* Notifications Badge icon */
+[data-testid="element-container"]:has(.top-nav-marker[data-type="notifications"]) + [data-testid="element-container"] button {
+    width: 38px !important;
+    padding: 0 !important;
+}
+
+[data-testid="element-container"]:has(.top-nav-marker[data-type="notifications"]) + [data-testid="element-container"] button::after {
+    content: '🔔';
+    font-size: 0.95rem;
+}
+
+/* Avatar button */
+[data-testid="element-container"]:has(.top-nav-marker[data-type="avatar"]) + [data-testid="element-container"] button {
+    width: 38px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+}
+
+[data-testid="element-container"]:has(.top-nav-marker[data-type="avatar"]) + [data-testid="element-container"] button::after {
+    content: '👤';
+    font-size: 0.95rem;
+}
+
+/* Deploy Button */
+[data-testid="element-container"]:has(.top-nav-marker[data-type="deploy"]) + [data-testid="element-container"] button {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.2) !important;
+}
+
+[data-testid="element-container"]:has(.top-nav-marker[data-type="deploy"]) + [data-testid="element-container"] button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4) !important;
+    opacity: 0.95 !important;
+}
+
+/* Sidebar transition overrides */
+[data-testid="stSidebar"]:has(.nav-pill-seed) {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[data-testid="stSidebar"] button {
+    border-radius: 12px !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* Hide empty Streamlit iframe container wrappers */
+div[data-testid="element-container"]:has(iframe[height="0"]) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Hide native Streamlit header to remove Deploy button and empty spacer panel */
+header[data-testid="stHeader"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+}
+
+/* Restore pointer events for header action elements like the Main Menu */
+header[data-testid="stHeader"] [data-testid="stHeaderActionElements"] {
+    pointer-events: auto !important;
+}
+
+/* Hide only Streamlit's top-right Deploy button */
+.stDeployButton,
+.stAppDeployButton,
+[data-testid="stDeployButton"],
+[data-testid="stHeaderDeployButton"],
+button[data-testid="stHeaderDeployButton"],
+header[data-testid="stHeader"] .stDeployButton,
+header[data-testid="stHeader"] button[data-testid="stDeployButton"] {
+    display: none !important;
+}
+
+/* Style the floating sidebar toggle/menu button */
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: fixed !important;
+    top: 1.25rem !important;
+    left: 1.25rem !important;
+    z-index: 999999 !important;
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    width: 40px !important;
+    height: 40px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.2s ease-in-out !important;
+    pointer-events: auto !important;
+}
+
+[data-testid="collapsedControl"]:hover {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 15px rgba(108, 99, 255, 0.25) !important;
+    transform: scale(1.05) !important;
+}
+
+[data-testid="collapsedControl"] button {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text) !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+/* Replace the arrow icon with a hamburger icon (☰) */
+[data-testid="collapsedControl"] button::after {
+    content: '☰' !important;
+    font-size: 1.25rem !important;
+    color: var(--text) !important;
+    font-weight: bold !important;
+}
+
+/* Hide the native arrow svg inside the button */
+[data-testid="collapsedControl"] button svg {
+    display: none !important;
+}
+
+/* Hide landing page trigger wrappers and hero section marker */
+div[data-testid="element-container"]:has(.hidden-get-started-trigger),
+div[data-testid="element-container"]:has(.hidden-view-demo-trigger),
+div[data-testid="element-container"]:has(.hero-btn-primary-wrapper),
+div[data-testid="element-container"]:has(.hero-btn-secondary-wrapper),
+div[data-testid="element-container"]:has(.hero-section-marker) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Style st.container as the .hero-section */
+div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .hero-section-marker) {
+    position: relative !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+    border: 1px solid var(--border) !important;
+    overflow: hidden !important;
+    padding: 4rem 2.5rem 5rem !important;
+    margin-bottom: 4rem !important;
+    background:
+        radial-gradient(
+            ellipse 55% 70% at 15% 40%,
+            rgba(124, 58, 237, 0.22),
+            transparent 65%
+        ),
+        radial-gradient(
+            ellipse 45% 55% at 85% 60%,
+            rgba(34, 211, 238, 0.14),
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(124, 58, 237, 0.06) 0%,
+            transparent 70%
+        ) !important;
+}
+
+/* Style st.columns as the .hero-grid */
+div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .hero-section-marker) > div[data-testid="stHorizontalBlock"] {
+    display: grid !important;
+    grid-template-columns: 1.15fr 1fr !important;
+    gap: 4rem !important;
+    align-items: center !important;
+}
+
+@media (max-width: 991px) {
+    div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .hero-section-marker) > div[data-testid="stHorizontalBlock"] {
+        grid-template-columns: 1fr !important;
+        gap: 3rem !important;
+    }
+}
+
+/* Style Streamlit hero action buttons to look exactly like design buttons */
+div[data-testid="element-container"]:has(.hero-btn-primary-wrapper) + div[data-testid="element-container"] button {
+    color: #ffffff !important;
+    background: var(--primary) !important;
+    border: 1px solid var(--secondary) !important;
+    box-shadow: 0 1px 2px rgba(99, 102, 241, 0.2) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.65rem 1.25rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease-in-out !important;
+    width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+}
+
+div[data-testid="element-container"]:has(.hero-btn-primary-wrapper) + div[data-testid="element-container"] button:hover {
+    background: var(--secondary) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35) !important;
+}
+
+div[data-testid="element-container"]:has(.hero-btn-secondary-wrapper) + div[data-testid="element-container"] button {
+    color: var(--text) !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid var(--border) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.65rem 1.25rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease-in-out !important;
+    width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+}
+
+div[data-testid="element-container"]:has(.hero-btn-secondary-wrapper) + div[data-testid="element-container"] button:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-1px) !important;
+}
+
+div[data-testid="element-container"]:has(.hero-btn-primary-wrapper) + div[data-testid="element-container"] button:focus,
+div[data-testid="element-container"]:has(.hero-btn-secondary-wrapper) + div[data-testid="element-container"] button:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px var(--secondary) !important;
+}
+
+
 

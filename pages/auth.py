@@ -5,9 +5,18 @@ from database.auth_db import verify_user, create_user
 
 def render() -> None:
     """Render the authentication workspace."""
-    # Ensure auth state exists
+    # Ensure auth and terms states exist
     if "auth_mode" not in st.session_state:
         st.session_state["auth_mode"] = "signin"
+    if "show_terms" not in st.session_state:
+        st.session_state["show_terms"] = False
+    if "terms_accepted" not in st.session_state:
+        st.session_state["terms_accepted"] = False
+
+    if st.session_state["show_terms"]:
+        from pages import terms_privacy
+        terms_privacy.render()
+        return
 
     # Inject CSS to hide the sidebar completely, use full screen, and center the card
     st.markdown(
@@ -63,9 +72,21 @@ def render() -> None:
             # Remember Me Checkbox
             remember_me = st.checkbox("Remember Me", value=True, key="auth_remember")
             
+            # Terms Agreement Checkbox & Read Link
+            terms_accepted = st.checkbox(
+                "I have read and agree to the Terms of Service and Privacy Policy.", 
+                value=st.session_state.get("terms_accepted", False), 
+                key="auth_terms_checkbox_signin"
+            )
+            st.session_state["terms_accepted"] = terms_accepted
+            
+            if st.button("Read Terms of Service", type="secondary", use_container_width=True, key="read_terms_signin"):
+                st.session_state["show_terms"] = True
+                st.rerun()
+
             st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
             
-            if st.button("Sign In", use_container_width=True, type="primary"):
+            if st.button("Sign In", use_container_width=True, type="primary", disabled=not st.session_state.get("terms_accepted", False)):
                 if not email or not password:
                     st.error("Please fill in all credentials.")
                 else:
@@ -100,10 +121,21 @@ def render() -> None:
             email = st.text_input("Email Address", placeholder="name@company.com", key="auth_email")
             password = st.text_input("Password", type="password", placeholder="••••••••", key="auth_password")
             confirm_password = st.text_input("Confirm Password", type="password", placeholder="••••••••", key="auth_confirm")
+            # Terms Agreement Checkbox & Read Link
+            terms_accepted = st.checkbox(
+                "I have read and agree to the Terms of Service and Privacy Policy.", 
+                value=st.session_state.get("terms_accepted", False), 
+                key="auth_terms_checkbox_signup"
+            )
+            st.session_state["terms_accepted"] = terms_accepted
             
+            if st.button("Read Terms of Service", type="secondary", use_container_width=True, key="read_terms_signup"):
+                st.session_state["show_terms"] = True
+                st.rerun()
+
             st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
             
-            if st.button("Sign Up", use_container_width=True, type="primary"):
+            if st.button("Sign Up", use_container_width=True, type="primary", disabled=not st.session_state.get("terms_accepted", False)):
                 if not name or not email or not password or not confirm_password:
                     st.error("Please fill in all fields.")
                 elif password != confirm_password:

@@ -13,6 +13,7 @@ from utils.theme_manager import inject_theme_css
 
 @st.cache_data
 def _read_stylesheet() -> str:
+    # Read custom stylesheet (updated v12)
     with open("styles/theme.css", "r", encoding="utf-8") as f:
         return f.read()
 
@@ -38,12 +39,19 @@ def inject_styles():
 
 def render_hero():
     """Render the hero section with headline and call-to-action buttons."""
-    st.markdown(
-        """
-        <section class="hero-section">
-            <div class="hero-glow hero-glow-a"></div>
-            <div class="hero-glow hero-glow-b"></div>
-            <div class="hero-grid">
+    with st.container():
+        # Marker to target the container in CSS
+        st.markdown('<div class="hero-section-marker"></div>', unsafe_allow_html=True)
+        
+        # Glow effects
+        st.markdown('<div class="hero-glow hero-glow-a"></div><div class="hero-glow hero-glow-b"></div>', unsafe_allow_html=True)
+        
+        # Grid layout (columns)
+        col_left, col_right = st.columns([1.1, 1], gap="large")
+        
+        with col_left:
+            st.markdown(
+                """
                 <div class="hero-content">
                     <span class="hero-badge">
                         <span class="hero-badge-dot"></span>
@@ -57,11 +65,27 @@ def render_hero():
                         AI-Powered Business Intelligence Platform for teams
                         that need clarity, speed, and precision at enterprise scale.
                     </p>
-                    <div class="hero-actions">
-                        <button class="btn btn-primary">Get Started</button>
-                        <button class="btn btn-secondary">View Demo</button>
-                    </div>
                 </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Sub-columns for buttons
+            col_btn1, col_btn2 = st.columns([1, 1])
+            with col_btn1:
+                st.markdown('<div class="hero-btn-primary-wrapper"></div>', unsafe_allow_html=True)
+                if st.button("Get Started", key="hero_get_started", use_container_width=True):
+                    st.session_state["current_page"] = "upload"
+                    st.rerun()
+            with col_btn2:
+                st.markdown('<div class="hero-btn-secondary-wrapper"></div>', unsafe_allow_html=True)
+                if st.button("View Demo", key="hero_view_demo", use_container_width=True):
+                    st.session_state["current_page"] = "dashboard"
+                    st.rerun()
+
+        with col_right:
+            st.markdown(
+                """
                 <div class="hero-visual">
                     <div class="dash-glow-ring"></div>
                     <div class="dash-frame">
@@ -134,11 +158,9 @@ def render_hero():
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        """,
-        unsafe_allow_html=True,
-    )
+                """,
+                unsafe_allow_html=True
+            )
 
 
 def render_kpi_stats():
@@ -530,13 +552,28 @@ def render_landing_page():
 def main():
     """Bootstrap the application."""
     configure_page()
-    inject_styles()
 
     # 1. User Authentication Guard
     if not st.session_state.get("authenticated", False):
+        # Prevent any brief sidebar/header flicker by hiding them immediately
+        st.markdown(
+            """
+            <style>
+                [data-testid="stSidebar"], [data-testid="collapsedControl"], [data-testid="stHeader"], .stAppHeader {
+                    display: none !important;
+                    width: 0 !important;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        inject_styles()
         from pages import auth
         auth.render()
         return
+
+    # User is authenticated: inject regular styling
+    inject_styles()
 
     if "current_page" not in st.session_state:
         st.session_state["current_page"] = "landing"
@@ -547,7 +584,7 @@ def main():
     current_page = st.session_state["current_page"]
 
     # 2. Workflow Quality Guard
-    if current_page in ["dashboard", "visual_analytics", "ai_insights", "reports"]:
+    if current_page in ["dashboard", "visual_analytics", "reports"]:
         if "dataset" in st.session_state:
             df = st.session_state["dataset"]
             if "dataset_health_score" not in st.session_state:
@@ -585,6 +622,69 @@ def main():
         reports.render()
     elif current_page == "settings":
         settings.render()
+
+    # Inject JS Sidebar Auto-Collapse & Default Collapse Helper
+    import streamlit.components.v1 as components
+    with st.sidebar:
+        components.html(
+            """
+            <script>
+                const doc = window.parent.document;
+                
+                function collapseSidebar() {
+                    const appContainer = doc.querySelector('[data-testid="stAppViewContainer"]');
+                    if (appContainer && appContainer.getAttribute('data-sidebar-state') === 'expanded') {
+                        const sidebar = doc.querySelector('[data-testid="stSidebar"]');
+                        if (sidebar) {
+                            const collapseButton = sidebar.querySelector('button[aria-label="Collapse sidebar"]') || 
+                                                   sidebar.querySelector('[data-testid="collapsedControl"] button') ||
+                                                   sidebar.querySelector('button');
+                            if (collapseButton) {
+                                collapseButton.click();
+                            }
+                        }
+                    }
+                }
+    
+                // 1. Initial load collapse (collapse by default)
+                if (!window.parent.__clario_initial_collapsed) {
+                    window.parent.__clario_initial_collapsed = true;
+                    setTimeout(collapseSidebar, 300);
+                }
+    
+                // 2. Attach click listeners to all navigation buttons inside the sidebar
+                function setupNavClickListeners() {
+                    const sidebar = doc.querySelector('[data-testid="stSidebar"]');
+                    if (sidebar) {
+                        const buttons = sidebar.querySelectorAll('button');
+                        buttons.forEach(btn => {
+                            const label = btn.getAttribute('aria-label') || '';
+                            if (label !== 'Collapse sidebar' && !btn.id.includes('collapsedControl') && !btn.className.includes('collapsedControl')) {
+                                if (!btn.__clario_listener_attached) {
+                                    btn.__clario_listener_attached = true;
+                                    btn.addEventListener('click', () => {
+                                        setTimeout(collapseSidebar, 150);
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+    
+                // Setup a mutation observer to watch for sidebar DOM changes and attach click listeners
+                const targetNode = doc.querySelector('[data-testid="stSidebar"]');
+                if (targetNode) {
+                    const observer = new MutationObserver((mutations) => {
+                        setupNavClickListeners();
+                    });
+                    observer.observe(targetNode, { childList: true, subtree: true });
+                    setupNavClickListeners();
+                }
+            </script>
+            """,
+            height=0,
+            width=0,
+        )
 
 
 if __name__ == "__main__":

@@ -238,7 +238,10 @@ def render_sidebar_navigation(current_page: str) -> None:
     st.sidebar.markdown('<div class="sidebar-nav-spacer" style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem;"></div>', unsafe_allow_html=True)
     st.sidebar.markdown('<span class="nav-pill-seed" data-nav="signout" data-active="false"></span>', unsafe_allow_html=True)
     if st.sidebar.button("Sign Out", key="sidebar_signout", use_container_width=True):
+        from utils.workspace_manager import clear_workspace
+        clear_workspace()
         st.session_state["authenticated"] = False
         st.session_state["user"] = None
         st.session_state["current_page"] = "landing"
         st.rerun()
+

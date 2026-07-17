@@ -369,6 +369,12 @@ def perform_advanced_audit(df: pd.DataFrame) -> dict:
     high_card_cols = []
     n_rows = len(df)
     for col in df.select_dtypes(include=["object", "category"]).columns:
+        col_lower = col.lower()
+        # Avoid flagging date columns as high cardinality
+        is_date_col = any(kw in col_lower for kw in ["date", "time", "year", "created", "updated", "joining", "order", "timestamp"])
+        if is_date_col:
+            continue
+            
         if n_rows > 10:
             uniq_cnt = df[col].nunique()
             if uniq_cnt / n_rows > 0.9:
@@ -378,7 +384,7 @@ def perform_advanced_audit(df: pd.DataFrame) -> dict:
     invalid_date_cols = {}
     for col in df.select_dtypes(include=["object"]).columns:
         col_lower = col.lower()
-        if any(kw in col_lower for kw in ["date", "time", "year", "created", "updated"]):
+        if any(kw in col_lower for kw in ["date", "time", "year", "created", "updated", "joining", "order", "timestamp"]):
             # Ignore completely empty columns
             if df[col].notna().any():
                 # Count coerced failures
@@ -443,6 +449,20 @@ def render() -> None:
         title="Upload Dataset",
         subtitle="Import your CSV or Excel spreadsheets to profile, clean, and analyze your business data.",
         label="Data Workspace",
+    )
+
+    # Privacy Notice
+    st.markdown(
+        """
+        <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.5rem;">
+            <p style="margin: 0; font-size: 0.82rem; color: var(--text); line-height: 1.5;">
+                🔒 <strong>Privacy Notice</strong>: Your uploaded datasets are processed only during your current session. 
+                CLARIO AI does not permanently store, share, or transmit your files. 
+                All uploaded data is removed when your session ends or you clear the workspace.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
     # Initialize recent uploads storage
@@ -561,6 +581,16 @@ def render() -> None:
         df = st.session_state["dataset"]
         orig_df = st.session_state.get("original_df", df)
         filename = st.session_state.get("dataset_filename", "dataset.csv")
+
+        # Active Dataset Row with Clear Workspace button
+        col_title, col_clear = st.columns([4, 1.2])
+        with col_title:
+            st.markdown(f'<h3 style="font-weight: 700; color: var(--text); margin-top: 0.5rem; margin-bottom: 1.5rem;">Active Dataset: <span style="color: var(--primary);">{filename}</span></h3>', unsafe_allow_html=True)
+        with col_clear:
+            if st.button("Clear Workspace", key="upload_clear_workspace", type="secondary", use_container_width=True):
+                from utils.workspace_manager import clear_workspace
+                clear_workspace()
+                st.rerun()
 
         # Get profile stats
         profile = DatasetService.get_profile(df)
@@ -900,7 +930,7 @@ def render() -> None:
                 for item in preview_items:
                     st.markdown(f'<p style="font-size: 0.82rem; color: var(--subtext); margin-bottom: 0.25rem;">&nbsp;&nbsp;&bull; {item}</p>', unsafe_allow_html=True)
             else:
-                st.markdown('<p style="font-size: 0.82rem; color: var(--subtext); font-style: italic; margin-bottom: 0.5rem;">No operations selected.</p>', unsafe_allow_html=True)
+                st.info("No cleaning operations selected.")
 
             st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
             
@@ -908,7 +938,7 @@ def render() -> None:
                 work_df = orig_df.copy()
                 detailed_changes = []
                 
-                # A. Remove duplicates
+                # 1. Remove duplicate rows
                 rows_removed = 0
                 if clean_dups:
                     from analytics.cleaning import remove_duplicates
@@ -919,138 +949,159 @@ def render() -> None:
                 else:
                     detailed_changes.append("**Duplicate rows**: No duplicates removed.")
                     
-                # B. Fill numeric with median
+                # 2. Fill missing values
                 filled_count = 0
                 if clean_num:
                     from analytics.cleaning import fill_missing
                     num_cols = work_df.select_dtypes(include=[np.number]).columns
                     for col in num_cols:
-                        nulls_count = int(work_df[col].isnull().sum())
-                        if nulls_count > 0:
-                            work_df = fill_missing(work_df, column=col, strategy="median")
-                            filled_count += nulls_count
+                        if col in work_df.columns:
+                            nulls_count = int(work_df[col].isnull().sum())
+                            if nulls_count > 0:
+                                work_df = fill_missing(work_df, column=col, strategy="median")
+                                filled_count += nulls_count
                     detailed_changes.append(f"**Missing numerical values**: Imputed {filled_count} cell values with Median.")
                 else:
                     detailed_changes.append("**Missing numerical values**: No missing numeric values filled.")
                     
-                # C. Fill categorical with mode
                 if clean_cat:
                     from analytics.cleaning import fill_missing
                     cat_cols = work_df.select_dtypes(include=["object", "category", "bool"]).columns
                     for col in cat_cols:
-                        nulls_count = int(work_df[col].isnull().sum())
-                        if nulls_count > 0:
-                            work_df = fill_missing(work_df, column=col, strategy="mode")
-                            filled_count += nulls_count
+                        if col in work_df.columns:
+                            nulls_count = int(work_df[col].isnull().sum())
+                            if nulls_count > 0:
+                                work_df = fill_missing(work_df, column=col, strategy="mode")
+                                filled_count += nulls_count
                     detailed_changes.append(f"**Missing categorical values**: Imputed missing cells with Mode.")
                 else:
                     detailed_changes.append("**Missing categorical values**: No missing categorical values filled.")
-                    
-                # D. Remove empty columns
+
                 empty_cols_to_remove = []
                 if clean_empty_cols:
-                    empty_cols_to_remove = [col for col in work_df.columns if work_df[col].isna().all()]
-                    work_df = work_df.drop(columns=empty_cols_to_remove)
+                    # Do not drop date-related columns
+                    empty_cols_to_remove = [
+                        col for col in work_df.columns
+                        if work_df[col].isna().all() and not any(kw in col.lower() for kw in ["date", "time", "year", "created", "updated", "joining", "order", "timestamp"])
+                    ]
+                    work_df = work_df.drop(columns=[col for col in empty_cols_to_remove if col in work_df.columns])
                     detailed_changes.append(f"**Empty columns**: Dropped {len(empty_cols_to_remove)} columns (`{', '.join(empty_cols_to_remove)}`).")
                 else:
                     detailed_changes.append("**Empty columns**: No empty columns dropped.")
                     
-                # E. Auto convert datatypes
+                # 3. Convert datatypes
                 converted_cols = []
                 if clean_dtypes:
                     from analytics.cleaning import convert_datatypes, auto_detect_datatypes
                     inferred_types = auto_detect_datatypes(work_df)
                     for col in work_df.columns:
-                        curr_type = str(work_df[col].dtype)
-                        inf_type = inferred_types.get(col)
-                        
-                        is_incorrect = False
-                        target_type = None
-                        if inf_type == "datetime64[ns]" and not curr_type.startswith("datetime"):
-                            is_incorrect = True
-                            target_type = "datetime"
-                        elif inf_type == "category" and curr_type not in ["category", "bool"]:
-                            is_incorrect = True
-                            target_type = "category"
-                        elif inf_type == "int64" and not (curr_type.startswith("int") or curr_type.startswith("UInt")):
-                            is_incorrect = True
-                            target_type = "int64"
-                        elif inf_type == "float64" and not curr_type.startswith("float"):
-                            is_incorrect = True
-                            target_type = "float64"
+                        if col in work_df.columns:
+                            curr_type = str(work_df[col].dtype)
+                            inf_type = inferred_types.get(col)
                             
-                        if is_incorrect and target_type:
-                            work_df = convert_datatypes(work_df, column=col, datatype=target_type)
-                            converted_cols.append(f"`{col}` ➔ `{inf_type}`")
-                            
+                            is_incorrect = False
+                            target_type = None
+                            if inf_type == "datetime64[ns]" and not curr_type.startswith("datetime"):
+                                is_incorrect = True
+                                target_type = "datetime"
+                            elif inf_type == "category" and curr_type not in ["category", "bool"]:
+                                is_incorrect = True
+                                target_type = "category"
+                            elif inf_type == "int64" and not (curr_type.startswith("int") or curr_type.startswith("UInt")):
+                                is_incorrect = True
+                                target_type = "int64"
+                            elif inf_type == "float64" and not curr_type.startswith("float"):
+                                is_incorrect = True
+                                target_type = "float64"
+                                
+                            if is_incorrect and target_type:
+                                work_df = convert_datatypes(work_df, column=col, datatype=target_type)
+                                converted_cols.append(f"`{col}` ➔ `{inf_type}`")
+                                
                     detailed_changes.append(f"**Datatype conversions**: Converted {len(converted_cols)} columns ({', '.join(converted_cols)}).")
                 else:
                     detailed_changes.append("**Datatype conversions**: No datatypes converted.")
                     
-                # F. Trim text columns
                 if clean_trim:
                     trimmed_cols_count = 0
                     for col in work_df.columns:
-                        if work_df[col].dtype == "object":
-                            work_df[col] = work_df[col].apply(lambda x: x.strip() if isinstance(x, str) else x)
-                            trimmed_cols_count += 1
-                        elif isinstance(work_df[col].dtype, pd.CategoricalDtype):
-                            try:
-                                work_df[col] = work_df[col].cat.rename_categories(lambda x: x.strip() if isinstance(x, str) else x)
+                        if col in work_df.columns:
+                            if work_df[col].dtype == "object":
+                                work_df[col] = work_df[col].apply(lambda x: x.strip() if isinstance(x, str) else x)
                                 trimmed_cols_count += 1
-                            except Exception:
-                                pass
+                            elif isinstance(work_df[col].dtype, pd.CategoricalDtype):
+                                try:
+                                    work_df[col] = work_df[col].cat.rename_categories(lambda x: x.strip() if isinstance(x, str) else x)
+                                    trimmed_cols_count += 1
+                                except Exception:
+                                    pass
                     detailed_changes.append(f"**Whitespace trimming**: Trimmed spaces across {trimmed_cols_count} text columns.")
                 else:
                     detailed_changes.append("**Whitespace trimming**: No whitespace trimmed.")
+
+                # 4. Validate and clean date columns
+                invalid_dates_fixed = 0
+                if clean_invalid_dates:
+                    for col in audit["invalid_date_cols"]:
+                        if col in work_df.columns:
+                            orig_n = int(work_df[col].isnull().sum())
+                            work_df[col] = pd.to_datetime(work_df[col], errors="coerce")
+                            new_n = int(work_df[col].isnull().sum())
+                            invalid_dates_fixed += (new_n - orig_n)
+                    detailed_changes.append(f"**Invalid dates**: Coerced {invalid_dates_fixed} values to NaT.")
+                else:
+                    detailed_changes.append("**Invalid dates**: No invalid dates coerced.")
                     
-                # G. Clip Outliers
+                # 5. Handle outliers
                 outliers_clipped = 0
                 if clean_outliers:
                     for col in audit["outlier_cols"]:
-                        q1 = work_df[col].quantile(0.25)
-                        q3 = work_df[col].quantile(0.75)
-                        iqr = q3 - q1
-                        lower = q1 - 1.5 * iqr
-                        upper = q3 + 1.5 * iqr
-                        clip_mask = (work_df[col] < lower) | (work_df[col] > upper)
-                        outliers_clipped += int(clip_mask.sum())
-                        work_df[col] = work_df[col].clip(lower, upper)
+                        if col in work_df.columns:
+                            q1 = work_df[col].quantile(0.25)
+                            q3 = work_df[col].quantile(0.75)
+                            iqr = q3 - q1
+                            if iqr > 0:
+                                lower = q1 - 1.5 * iqr
+                                upper = q3 + 1.5 * iqr
+                                clip_mask = (work_df[col] < lower) | (work_df[col] > upper)
+                                outliers_clipped += int(clip_mask.sum())
+                                work_df[col] = work_df[col].clip(lower, upper)
                     detailed_changes.append(f"**Outliers**: Capped {outliers_clipped} outliers to IQR bounds.")
                 else:
                     detailed_changes.append("**Outliers**: No outliers clipped.")
                     
-                # H. Remove Constant Columns
+                # 6. Remove constant columns
                 if clean_constant:
-                    work_df = work_df.drop(columns=audit["constant_cols"])
-                    detailed_changes.append(f"**Constant columns**: Dropped {len(audit['constant_cols'])} single-value columns.")
+                    constant_to_drop = [
+                        col for col in audit["constant_cols"]
+                        if col in work_df.columns and not any(kw in col.lower() for kw in ["date", "time", "year", "created", "updated", "joining", "order", "timestamp"])
+                    ]
+                    if constant_to_drop:
+                        work_df = work_df.drop(columns=constant_to_drop)
+                    detailed_changes.append(f"**Constant columns**: Dropped {len(constant_to_drop)} single-value columns.")
                 else:
                     detailed_changes.append("**Constant columns**: No constant columns dropped.")
                     
-                # I. Remove High-Cardinality Columns
+                # 7. Remove high-cardinality columns (if enabled)
                 if clean_high_card:
-                    work_df = work_df.drop(columns=audit["high_card_cols"])
-                    detailed_changes.append(f"**High-cardinality**: Dropped {len(audit['high_card_cols'])} columns.")
+                    high_card_to_drop = [
+                        col for col in audit["high_card_cols"]
+                        if col in work_df.columns and not any(kw in col.lower() for kw in ["date", "time", "year", "created", "updated", "joining", "order", "timestamp"])
+                    ]
+                    # Only remove true identifier columns like Name, Email, Phone, Address, Customer_ID, ID
+                    high_card_to_drop = [
+                        col for col in high_card_to_drop
+                        if any(id_kw in col.lower() for id_kw in ["name", "email", "phone", "address", "id", "identifier", "customer", "employee"])
+                    ]
+                    if high_card_to_drop:
+                        work_df = work_df.drop(columns=high_card_to_drop)
+                    detailed_changes.append(f"**High-cardinality**: Dropped {len(high_card_to_drop)} columns.")
                 else:
                     detailed_changes.append("**High-cardinality**: No high-cardinality columns dropped.")
-                    
-                # J. Fix Invalid Dates
-                invalid_dates_fixed = 0
-                if clean_invalid_dates:
-                    for col in audit["invalid_date_cols"]:
-                        orig_n = int(work_df[col].isnull().sum())
-                        work_df[col] = pd.to_datetime(work_df[col], errors="coerce")
-                        new_n = int(work_df[col].isnull().sum())
-                        invalid_dates_fixed += (new_n - orig_n)
-                    detailed_changes.append(f"**Invalid dates**: Coerced {invalid_dates_fixed} values to NaT.")
-                else:
-                    detailed_changes.append("**Invalid dates**: No invalid dates coerced.")
 
                 # Save results to session state
                 st.session_state["cleaned_df"] = work_df
                 st.session_state["dataset"] = work_df
-                
-                # Generate summary report
                 summary_report = {
                     "rows_removed": rows_removed,
                     "missing_fixed": filled_count,

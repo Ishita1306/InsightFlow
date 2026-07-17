@@ -19,42 +19,27 @@ class UploadService:
     @classmethod
     def process_upload(cls, uploaded_file) -> Tuple[pd.DataFrame, str]:
         """
-        Process the uploaded file:
+        Process the uploaded file completely in-memory:
         1. Validate filename extension (CSV, XLSX)
-        2. Save a copy of the file inside data/uploads/
-        3. Read the file into a pandas DataFrame
-        4. Validate that the dataset is not empty
+        2. Read the file into a pandas DataFrame directly from memory buffer
+        3. Validate that the dataset is not empty
         
         Returns:
-            Tuple[pd.DataFrame, str]: (DataFrame, saved_file_path)
+            Tuple[pd.DataFrame, str]: (DataFrame, "")
             
         Raises:
             ValueError: for unsupported, empty, corrupted, or failed files.
         """
-        cls.ensure_upload_dir()
-        
         filename = uploaded_file.name
         ext = os.path.splitext(filename.lower())[1]
         
         if ext not in [".csv", ".xlsx"]:
             raise ValueError(f"Unsupported file format '{ext}'. Only CSV and XLSX are supported.")
             
-        # Save file to data/uploads/
-        saved_path = os.path.join(cls.UPLOAD_DIR, filename)
+        # Read the file using pandas directly from memory buffer, leveraging cached loader
         try:
-            uploaded_file.seek(0)
-            with open(saved_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-        except Exception as e:
-            raise ValueError(f"Failed to save uploaded file to disk: {str(e)}")
-            
-        # Read the file using pandas
-        try:
-            uploaded_file.seek(0)
-            if ext == ".csv":
-                df = pd.read_csv(saved_path)
-            else:
-                df = pd.read_excel(saved_path)
+            from analytics.data_loader import load_dataset
+            df = load_dataset(uploaded_file, filename)
         except Exception as e:
             raise ValueError(f"Corrupted or invalid file. Could not parse tabular data: {str(e)}")
             
@@ -64,4 +49,4 @@ class UploadService:
         # Clean column names
         df.columns = [str(col).strip() for col in df.columns]
         
-        return df, saved_path
+        return df, ""

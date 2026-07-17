@@ -53,3 +53,9 @@ data/*
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Local database
+database/auth_db.sqlite
+
+# Development testing
+pages/99_Gemini_Test.py

@@ -6,28 +6,28 @@ import streamlit as st
 
 THEMES = {
     "dark": {
-        "bg": "#0B0F19",
-        "surface": "#111827",
-        "card": "#1F2937",
-        "primary": "#6366F1",
-        "secondary": "#4F46E5",
-        "accent": "#06B6D4",
-        "text": "#F9FAFB",
-        "subtext": "#9CA3AF",
+        "bg": "#0B1020",
+        "surface": "#0E1326",
+        "card": "#12182B",
+        "primary": "#6C63FF",
+        "secondary": "#4F8CFF",
+        "accent": "#6C63FF",
+        "text": "#F8FAFC",
+        "subtext": "#94A3B8",
         "border": "rgba(255, 255, 255, 0.08)",
-        "glass": "rgba(17, 24, 39, 0.7)",
+        "glass": "rgba(18, 24, 43, 0.85)",
     },
     "light": {
-        "bg": "#FFFFFF",
-        "surface": "#F8FAFC",
+        "bg": "#F6F8FC",
+        "surface": "#EFF3F8",
         "card": "#FFFFFF",
-        "primary": "#0F172A",
-        "secondary": "#334155",
-        "accent": "#475569",
-        "text": "#0F172A",
+        "primary": "#5B5CEB",
+        "secondary": "#5B5CEB",
+        "accent": "#5B5CEB",
+        "text": "#1E293B",
         "subtext": "#64748B",
         "border": "#E2E8F0",
-        "glass": "#FFFFFF",
+        "glass": "rgba(255, 255, 255, 0.9)",
     }
 }
 
@@ -72,7 +72,7 @@ def inject_theme_css():
     div[data-baseweb="select"] > div, div[data-baseweb="input"] {{
         background-color: {theme_vars['surface']} !important;
         border: 1px solid {theme_vars['border']} !important;
-        border-radius: 6px !important;
+        border-radius: 12px !important;
         color: {theme_vars['text']} !important;
     }}
     
@@ -82,17 +82,17 @@ def inject_theme_css():
     
     /* Popover/Dropdown listbox */
     div[role="listbox"] {{
-        background-color: {theme_vars['surface']} !important;
+        background-color: {theme_vars['card']} !important;
         border: 1px solid {theme_vars['border']} !important;
-        border-radius: 6px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
     }}
     
     div[role="option"] {{
         color: {theme_vars['text']} !important;
     }}
     div[role="option"]:hover, div[role="option"][aria-selected="true"] {{
-        background-color: {theme_vars['card']} !important;
+        background-color: {theme_vars['surface']} !important;
         color: {theme_vars['primary']} !important;
     }}
     
@@ -113,7 +113,7 @@ def inject_theme_css():
     /* Checkboxes & Radios */
     span[data-baseweb="checkbox"] > div {{
         border-color: {theme_vars['border']} !important;
-        border-radius: 4px !important;
+        border-radius: 6px !important;
     }}
     span[data-baseweb="checkbox"][data-checked="true"] > div {{
         background-color: {theme_vars['primary']} !important;
@@ -130,14 +130,14 @@ def inject_theme_css():
     div[data-testid="stFileUploaderDropzone"] {{
         background-color: {theme_vars['surface']} !important;
         border: 1px dashed {theme_vars['primary']} !important;
-        border-radius: 8px !important;
+        border-radius: 18px !important;
     }}
     
     /* Success, Info, Warning, Error alerts styling */
     div[data-testid="stAlert"] {{
-        background-color: {theme_vars['surface']} !important;
+        background-color: {theme_vars['card']} !important;
         border: 1px solid {theme_vars['border']} !important;
-        border-radius: 8px !important;
+        border-radius: 18px !important;
     }}
     """
     
@@ -145,10 +145,10 @@ def inject_theme_css():
     if theme_name == "light":
         theme_css += """
         .stApp {
-            background: #FFFFFF !important;
+            background: #F6F8FC !important;
         }
         .hero-section {
-            background: #F8FAFC !important;
+            background: #FFFFFF !important;
             border: 1px solid #E2E8F0 !important;
         }
         .hero-glow, .dash-glow-ring {
@@ -157,12 +157,12 @@ def inject_theme_css():
         .glass-card {
             background: #FFFFFF !important;
             border: 1px solid #E2E8F0 !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
         }
         .glass-card:hover {
-            transform: none !important;
-            border-color: #0F172A !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+            transform: translateY(-4px) !important;
+            border-color: #5B5CEB !important;
+            box-shadow: 0 8px 30px rgba(91, 92, 235, 0.15) !important;
         }
         """
         
