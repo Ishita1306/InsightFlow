@@ -1,119 +1,169 @@
+# 🚀 Clario
 
-# InsightFlow AI
+> **AI-Powered Business Intelligence Web Application**
 
-An AI-Powered Business Intelligence Platform that transforms raw business datasets into interactive dashboards, predictive forecasts, AI-generated insights, and executive reports.
+Clario is an end-to-end Business Intelligence platform that enables users to upload datasets, clean and analyze data, build interactive dashboards, generate AI-powered insights, and create executive-ready reports—all through an intuitive web interface.
 
-## Features
+🌐 **Live Demo:** https://clario-bnkpdsrcejkujq75af9xmr.streamlit.app/
 
-- Upload CSV and Excel datasets
-- Automatic data profiling
-- Data cleaning
-- Interactive dashboards
-- Business KPI analytics
-- Sales forecasting
-- AI-generated insights
-- Executive PDF reports
-- Dashboard export (PDF & PNG)
-- Clean dataset export
+---
 
-## Tech Stack
+# ✨ Features
 
-### Frontend
-- Streamlit
+* 🔐 Secure User Authentication
+* 📂 Upload CSV & Excel datasets
+* 🧹 Automated Data Cleaning & Profiling
+* 📊 Interactive Business Dashboards
+* 📈 KPI & Performance Analytics
+* 🤖 AI-Powered Insight Assistant
+* 📉 Predictive Analytics & Forecasting
+* 📑 Executive Report Generation
+* 📥 Export Cleaned Data & Reports
+* 🌙 Modern Responsive User Interface
 
-### Backend
-- Python
+---
 
-### Data Processing
-- Pandas
-- NumPy
+# 🛠 Tech Stack
 
-### Visualization
-- Plotly
+| Category           | Technologies              |
+| ------------------ | ------------------------- |
+| Frontend           | Streamlit                 |
+| Backend            | Python                    |
+| Data Processing    | Pandas, NumPy             |
+| Data Visualization | Plotly                    |
+| Database           | SQLite                    |
+| Machine Learning   | Scikit-learn, Statsmodels |
+| Version Control    | Git & GitHub              |
+| Deployment         | Streamlit Community Cloud |
 
-### Machine Learning
-- Scikit-learn
-- Statsmodels
+---
 
-### Database
-- SQLite
+# 🌐 Live Application
 
-### Deployment
-- Streamlit Community Cloud
+You can access the deployed application here:
 
-## Project Status
+**https://clario-bnkpdsrcejkujq75af9xmr.streamlit.app/**
 
-🚧 Currently Under Development
+---
 
+# 📸 Screenshots
 
-# InsightFlow
+> Screenshots will be added soon.
 
-Production-quality SaaS foundation for a business intelligence platform.
+Recommended screenshots:
 
-## Overview
+* Landing Page
+* Login / Sign Up
+* Dataset Upload
+* Dashboard
+* AI Insight Panel
+* Reports
 
-InsightFlow is structured using clean architecture principles. This repository
-contains the project scaffold only — no dashboards, analytics, forecasting,
-machine learning, charts, or AI features are implemented yet.
+---
 
-## Project Structure
+# 📂 Project Structure
 
+```text
+Clario/
+│
+├── analytics/
+├── assets/
+├── components/
+├── data/
+├── database/
+├── exports/
+├── forecasting/
+├── models/
+├── pages/
+├── reports/
+├── services/
+├── styles/
+├── tests/
+├── utils/
+│
+├── app.py
+├── requirements.txt
+└── README.md
 ```
-InsightFlow/
-├── app.py              # Streamlit entry point
-├── config.py           # Configuration container
-├── settings.py         # Environment-aware settings
-├── constants.py        # Static application constants
-├── assets/             # Static assets (images, icons)
-├── components/         # Reusable UI components
-├── pages/              # Streamlit page modules
-├── database/           # Data access layer
-├── services/           # Application / domain services
-├── models/             # Data models and schemas
-├── utils/              # Shared utility functions
-├── styles/             # Custom styling assets
-├── analytics/          # Analytics module (placeholder)
-├── forecasting/        # Forecasting module (placeholder)
-├── reports/            # Reporting module (placeholder)
-├── exports/            # Export module (placeholder)
-├── data/               # Local data storage
-├── docs/               # Project documentation
-└── tests/              # Test suite
+
+---
+
+# ⚙ Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/Ishita1306/Clario.git
 ```
 
-## Requirements
+Move into the project directory
 
-- Python 3.10+
-- pip
+```bash
+cd Clario
+```
 
-## Getting Started
+Create a virtual environment
 
-1. Create and activate a virtual environment:
+### Windows
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate      # macOS / Linux
-   .venv\Scripts\activate         # Windows
-   ```
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
 
-2. Install dependencies:
+### Linux / macOS
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-3. Run the application:
+Install dependencies
 
-   ```bash
-   streamlit run app.py
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-## Development
+Run the application
 
-- Follow PEP 8 style guidelines.
-- Keep business logic out of `app.py`; route through services and components.
-- Add feature code only within the appropriate layer directory.
+```bash
+streamlit run app.py
+```
 
-## License
+---
 
-Proprietary — all rights reserved.
+# 🚀 Usage
+
+1. Create an account or sign in.
+2. Upload a CSV or Excel dataset.
+3. Automatically clean and profile your data.
+4. Explore interactive dashboards and KPIs.
+5. Generate AI-powered business insights.
+6. Export reports and cleaned datasets.
+
+---
+
+# 🔮 Future Enhancements
+
+* Multi-user collaboration
+* Cloud database integration
+* Advanced forecasting models
+* Role-based access control
+* Custom dashboard builder
+* AI report generation improvements
+* PDF export enhancements
+* API integrations
+
+---
+
+# 👩‍💻 Developer
+
+**Ishita Goswami**
+
+B.Tech Computer Science Engineering (Data Science)
+
+---
+
+# 📄 License
+
+This project is intended for educational and portfolio purposes.
