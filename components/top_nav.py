@@ -1,5 +1,5 @@
 """
-Top navigation bar component for CLARIO AI.
+Top navigation bar component for Kosvio.
 
 Provides theme toggle, avatar, notification icon, current page title,
 active dataset status, search input, and deploy button.
@@ -59,27 +59,16 @@ def render_top_nav() -> None:
             )
 
     with col_right:
-        # Action controls aligned right using sub-columns (Theme toggle, Notifications, Avatar)
-        sub_cols = st.columns([6, 1, 1, 1], gap="small")
+        # Action controls aligned right using sub-columns (Notifications, Avatar)
+        sub_cols = st.columns([7, 1, 1], gap="small")
 
         with sub_cols[1]:
-            # Theme Switcher Icon Toggle
-            current_theme = st.session_state.get("theme", "dark")
-            st.markdown(
-                f'<span class="top-nav-marker" data-type="theme-toggle" data-theme="{current_theme}"></span>',
-                unsafe_allow_html=True,
-            )
-            if st.button("", key="top_nav_theme", width="stretch"):
-                st.session_state["theme"] = "light" if current_theme == "dark" else "dark"
-                st.rerun()
-
-        with sub_cols[2]:
             # Notifications Icon
             st.markdown('<span class="top-nav-marker" data-type="notifications"></span>', unsafe_allow_html=True)
             if st.button("", key="top_nav_notifications", width="stretch"):
                 st.toast("No new alerts. All systems operational.")
 
-        with sub_cols[3]:
+        with sub_cols[2]:
             # User Profile Avatar Icon (navigates to settings page)
             st.markdown('<span class="top-nav-marker" data-type="avatar"></span>', unsafe_allow_html=True)
             if st.button("", key="top_nav_avatar", width="stretch"):

@@ -527,7 +527,7 @@ def generate_conversational_response(query: str, df: pd.DataFrame, filename: str
             )
         else:
             response_body = (
-                f"Hello! I am your CLARIO BI Copilot. I have loaded **{filename}** into my context.\n\n"
+                f"Hello! I am your Kosvio BI Copilot. I have loaded **{filename}** into my context.\n\n"
                 f"Think of me as a translator between your raw table rows and practical business clarity. "
                 f"Your dataset has **{len(all_cols)} characteristics** (columns) and **{total_rows:,} entries** (rows).\n\n"
                 f"**Here are some questions we can explore together:**\n"
@@ -606,7 +606,7 @@ def render() -> None:
             {
                 "role": "assistant", 
                 "content": (
-                    f"Hello! I am **CLARIO Insight AI**. I have loaded your dataset **{filename}** into context. "
+                    f"Hello! I am **Kosvio Insight Assistant**. I have loaded your dataset **{filename}** into context. "
                     f"You don't need to be a data scientist to explore your data — simply ask me questions in plain English. "
                     f"What would you like to explore today?"
                 )

@@ -6,42 +6,29 @@ import streamlit as st
 
 THEMES = {
     "dark": {
-        "bg": "#0B1020",
-        "surface": "#0E1326",
-        "card": "#12182B",
-        "primary": "#6C63FF",
-        "secondary": "#4F8CFF",
-        "accent": "#6C63FF",
-        "text": "#F8FAFC",
-        "subtext": "#94A3B8",
+        "bg": "#0B0F19",
+        "surface": "#111827",
+        "card": "#1F2937",
+        "primary": "#6366F1",
+        "secondary": "#4F46E5",
+        "accent": "#06B6D4",
+        "text": "#FFFFFF",
+        "subtext": "#C8CBD7",
         "border": "rgba(255, 255, 255, 0.08)",
-        "glass": "rgba(18, 24, 43, 0.85)",
-    },
-    "light": {
-        "bg": "#F6F8FC",
-        "surface": "#EFF3F8",
-        "card": "#FFFFFF",
-        "primary": "#5B5CEB",
-        "secondary": "#5B5CEB",
-        "accent": "#5B5CEB",
-        "text": "#1E293B",
-        "subtext": "#64748B",
-        "border": "#E2E8F0",
-        "glass": "rgba(255, 255, 255, 0.9)",
+        "glass": "rgba(17, 24, 39, 0.55)",
     }
 }
 
 
 def get_current_theme():
-    """Retrieve active theme variables from session state."""
-    theme_name = st.session_state.get("theme", "dark")
-    return THEMES.get(theme_name, THEMES["dark"])
+    """Retrieve active theme variables (always dark)."""
+    return THEMES["dark"]
 
 
 def inject_theme_css():
-    """Inject theme-specific CSS variables to override theme.css variables."""
-    theme_name = st.session_state.get("theme", "dark")
-    theme_vars = THEMES.get(theme_name, THEMES["dark"])
+    """Inject dark theme CSS variables and premium UI overrides."""
+    st.session_state["theme"] = "dark"
+    theme_vars = THEMES["dark"]
     
     theme_css = f"""
     <style>
@@ -70,10 +57,23 @@ def inject_theme_css():
     
     /* Selectboxes, Dropdowns, Inputs styling */
     div[data-baseweb="select"] > div, div[data-baseweb="input"] {{
-        background-color: {theme_vars['surface']} !important;
-        border: 1px solid {theme_vars['border']} !important;
-        border-radius: 12px !important;
+        background-color: rgba(255, 255, 255, 0.02) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 10px !important;
         color: {theme_vars['text']} !important;
+        transition: all 0.25s ease-in-out !important;
+    }}
+    
+    div[data-baseweb="select"] > div:hover, div[data-baseweb="input"]:hover {{
+        border-color: rgba(99, 102, 241, 0.4) !important;
+        background-color: rgba(255, 255, 255, 0.04) !important;
+    }}
+    
+    div[data-baseweb="select"] > div:focus-within, div[data-baseweb="input"]:focus-within {{
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
     }}
     
     div[data-baseweb="select"] span, div[data-baseweb="input"] input {{
@@ -114,10 +114,17 @@ def inject_theme_css():
     span[data-baseweb="checkbox"] > div {{
         border-color: {theme_vars['border']} !important;
         border-radius: 6px !important;
+        background-color: transparent !important;
     }}
     span[data-baseweb="checkbox"][data-checked="true"] > div {{
         background-color: {theme_vars['primary']} !important;
         border-color: {theme_vars['primary']} !important;
+    }}
+    
+    /* Focus outline on checkbox */
+    span[data-baseweb="checkbox"]:focus-within > div {{
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
     }}
     
     /* Sidebar styling overrides */
@@ -141,30 +148,5 @@ def inject_theme_css():
     }}
     """
     
-    # Apply flat, gradient-free styles for light theme
-    if theme_name == "light":
-        theme_css += """
-        .stApp {
-            background: #F6F8FC !important;
-        }
-        .hero-section {
-            background: #FFFFFF !important;
-            border: 1px solid #E2E8F0 !important;
-        }
-        .hero-glow, .dash-glow-ring {
-            display: none !important;
-        }
-        .glass-card {
-            background: #FFFFFF !important;
-            border: 1px solid #E2E8F0 !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
-        }
-        .glass-card:hover {
-            transform: translateY(-4px) !important;
-            border-color: #5B5CEB !important;
-            box-shadow: 0 8px 30px rgba(91, 92, 235, 0.15) !important;
-        }
-        """
-        
     theme_css += "\n</style>"
     st.markdown(theme_css, unsafe_allow_html=True)

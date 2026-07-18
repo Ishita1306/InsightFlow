@@ -182,8 +182,8 @@ def render_sidebar_branding() -> None:
                 </svg>
             </div>
             <div class="sidebar-brand-copy">
-                <p class="sidebar-brand-name">CLARIO <span>AI</span></p>
-                <p class="sidebar-brand-tagline">Turn raw data into confident decisions.</p>
+                <p class="sidebar-brand-name">Kosvio</p>
+                <p class="sidebar-brand-tagline">Every dataset has a story.</p>
             </div>
         </div>
         """,

@@ -6,8 +6,8 @@ Environment-specific values belong in settings.py.
 """
 
 # Branding
-PRODUCT_NAME = "CLARIO"
-PRODUCT_TAGLINE = "Turn raw data into confident decisions."
+PRODUCT_NAME = "Kosvio"
+PRODUCT_TAGLINE = "Every person has their own universe. Every dataset has its own story."
 
 # Versioning
 APP_VERSION = "0.1.0"

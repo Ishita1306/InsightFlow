@@ -59,7 +59,7 @@ def render() -> None:
     with glass_card_panel():
         # Brand Header (using styles/theme.css classes instead of inline style rules)
         st.markdown(
-            '<h2 class="auth-title">CLARIO <span>AI</span></h2>',
+            '<h2 class="auth-title">Kosvio</h2>',
             unsafe_allow_html=True
         )
         
@@ -125,7 +125,7 @@ def render() -> None:
                 
         else:
             st.markdown(
-                '<p class="auth-subtitle">Create an account to get started with CLARIO.</p>',
+                '<p class="auth-subtitle">Create an account to get started with Kosvio.</p>',
                 unsafe_allow_html=True
             )
             

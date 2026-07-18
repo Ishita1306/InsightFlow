@@ -12,7 +12,7 @@ class AppConfig(object):
     """Immutable application configuration container."""
 
     def __init__(self):
-        self.app_name = "CLARIO"
+        self.app_name = "Kosvio"
         self.debug = False
         self.base_dir = Path(__file__).resolve().parent
 

@@ -145,7 +145,7 @@ def render() -> None:
                     (50, "Parsing tabular structure..."),
                     (75, "Validating column headers..."),
                     (95, "Running data profiling audits..."),
-                    (100, "Finalizing CLARIO session state...")
+                    (100, "Finalizing Kosvio session state...")
                 ]
                 
                 for pct, msg in stages:
@@ -457,7 +457,7 @@ def render() -> None:
         <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.5rem;">
             <p style="margin: 0; font-size: 0.82rem; color: var(--text); line-height: 1.5;">
                 🔒 <strong>Privacy Notice</strong>: Your uploaded datasets are processed only during your current session. 
-                CLARIO AI does not permanently store, share, or transmit your files. 
+                Kosvio does not permanently store, share, or transmit your files. 
                 All uploaded data is removed when your session ends or you clear the workspace.
             </p>
         </div>
@@ -522,7 +522,7 @@ def render() -> None:
                     (50, "Saving local file copy..."),
                     (75, "Parsing tabular structure..."),
                     (95, "Running data profiling audits..."),
-                    (100, "Finalizing CLARIO session state...")
+                    (100, "Finalizing Kosvio session state...")
                 ]
                 
                 for pct, msg in stages:
@@ -1190,7 +1190,7 @@ def render() -> None:
     else:
         render_empty_state(
             title="No Dataset Uploaded",
-            message="Please drag and drop your data file above. CLARIO will display analytics metrics, summaries, and distribution profiles once a file is provided.",
+            message="Please drag and drop your data file above. Kosvio will display analytics metrics, summaries, and distribution profiles once a file is provided.",
         )
 
 

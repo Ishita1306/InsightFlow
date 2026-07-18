@@ -97,7 +97,7 @@ class ExportService:
         story = []
         
         # 1. Document Header
-        story.append(Paragraph("CLARIO AI — Executive Intelligence Report", title_style))
+        story.append(Paragraph("Kosvio — Executive Intelligence Report", title_style))
         timestamp = datetime.datetime.now().strftime("%B %d, %Y at %I:%M %p")
         story.append(Paragraph(f"Dataset Ref: <b>{filename}</b> &nbsp;|&nbsp; Compiled: <b>{timestamp}</b>", subtitle_style))
         story.append(Spacer(1, 10))
@@ -206,7 +206,7 @@ class ExportService:
         tf = title_box.text_frame
         tf.word_wrap = True
         p1 = tf.paragraphs[0]
-        p1.text = "CLARIO AI"
+        p1.text = "Kosvio"
         p1.font.bold = True
         p1.font.size = Pt(44)
         p1.font.color.rgb = accent_blue
@@ -369,7 +369,7 @@ class ExportService:
             draw.text((x, y), text, fill=color, font=font)
 
         # Header Text
-        draw_text_simple(80, 75, "CLARIO AI - EXECUTIVE INTELLIGENCE SNAPSHOT", size=20, color='#6366F1', bold=True)
+        draw_text_simple(80, 75, "KOSVIO - EXECUTIVE INTELLIGENCE SNAPSHOT", size=20, color='#6366F1', bold=True)
         draw_text_simple(80, 100, f"Source File: {filename}   |   Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}", size=11, color='#94A3B8')
         
         # Health Score card (Left Column)

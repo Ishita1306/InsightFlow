@@ -1,8 +1,8 @@
-# 🚀 Clario
+# 🚀 Kosvio
 
-> **AI-Powered Business Intelligence Web Application**
+> **Human-Centered Business Intelligence Platform**
 
-Clario is an end-to-end Business Intelligence platform that enables users to upload datasets, clean and analyze data, build interactive dashboards, generate AI-powered insights, and create executive-ready reports—all through an intuitive web interface.
+Kosvio is an end-to-end Business Intelligence platform that enables users to upload datasets, clean and analyze data, build interactive dashboards, generate AI-powered insights, and create executive-ready reports—all through an intuitive web interface.
 
 🌐 **Live Demo:** https://clario-app.streamlit.app/
 

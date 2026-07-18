@@ -1,5 +1,5 @@
 """
-SQLite database service for CLARIO authentication.
+SQLite database service for Kosvio authentication.
 
 Handles user registration, password hashing (PBKDF2-SHA256), and credentials verification.
 """

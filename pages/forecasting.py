@@ -173,7 +173,7 @@ def render() -> None:
                 st.download_button(
                     "📥 Download Forecast Data",
                     data=csv_bytes,
-                    file_name=f"clario_forecast_{target_var}.csv",
+                    file_name=f"kosvio_forecast_{target_var}.csv",
                     mime="text/csv",
                     width="stretch"
                 )

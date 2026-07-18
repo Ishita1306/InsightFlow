@@ -1,5 +1,5 @@
 """
-Reusable info card notice component for CLARIO AI.
+Reusable info card notice component for Kosvio.
 """
 
 from typing import Optional

@@ -1,5 +1,5 @@
 """
-Reusable button components for CLARIO AI.
+Reusable button components for Kosvio.
 """
 
 from typing import Callable, Optional

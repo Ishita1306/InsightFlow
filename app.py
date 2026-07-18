@@ -21,7 +21,7 @@ def _read_stylesheet() -> str:
 def configure_page():
     """Apply global Streamlit page configuration."""
     st.set_page_config(
-        page_title="CLARIO AI",
+        page_title="Kosvio",
         layout="wide",
         initial_sidebar_state="collapsed",
     )
@@ -54,16 +54,16 @@ def render_hero():
                 """
                 <div class="hero-content">
                     <span class="hero-badge">
-                        <span class="hero-badge-dot"></span>
-                        AI-Powered Platform
+                        <svg class="hero-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: middle;"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        Human-Centered Business Intelligence
                     </span>
-                    <h1 class="hero-title">CLARIO <span>AI</span></h1>
+                    <h1 class="hero-title">Kosvio</h1>
                     <p class="hero-headline">
-                        Turn raw data into confident decisions.
+                        Every person has their own universe.<br>Every dataset has its own story.
                     </p>
                     <p class="hero-description">
-                        AI-Powered Business Intelligence Platform for teams
-                        that need clarity, speed, and precision at enterprise scale.
+                        Transform raw business data into interactive dashboards,
+                        AI-powered insights, predictive forecasts, and executive-ready reports.
                     </p>
                 </div>
                 """,
@@ -94,7 +94,7 @@ def render_hero():
                             <span class="dash-dot yellow"></span>
                             <span class="dash-dot green"></span>
                             <span class="dash-topbar-title">
-                                CLARIO Analytics
+                                Kosvio Analytics
                             </span>
                         </div>
                         <div class="dash-body">
@@ -352,7 +352,7 @@ def render_why():
         <section class="page-section why-section">
             <div class="section-header center">
                 <span class="section-label">Why Us</span>
-                <h2 class="section-title">Why Companies Choose CLARIO AI</h2>
+                <h2 class="section-title">Why Companies Choose Kosvio</h2>
                 <p class="section-subtitle">
                     Trusted by forward-thinking organizations that refuse to
                     compromise on speed, security, or intelligence.
@@ -456,10 +456,9 @@ def render_footer():
             <div class="footer-inner">
                 <div class="footer-top">
                     <div class="footer-brand">
-                        <p class="footer-brand-name">CLARIO <span>AI</span></p>
+                        <p class="footer-brand-name">Kosvio</p>
                         <p class="footer-brand-desc">
-                            Enterprise business intelligence for teams that
-                            demand clarity, speed, and precision at scale.
+                            Every person has their own universe. Every dataset has its own story.
                         </p>
                         <div class="footer-social">
                             <span class="footer-social-icon icon-box">
@@ -497,7 +496,7 @@ def render_footer():
                 </div>
                 <div class="footer-bottom">
                     <p class="footer-copy">
-                        &copy; 2026 CLARIO AI. All rights reserved.
+                        &copy; 2026 Kosvio. All rights reserved.
                     </p>
                     <span class="footer-badge">
                         <span class="footer-dot"></span>
@@ -530,7 +529,7 @@ def render_placeholder(title: str, badge: str = "Upcoming Feature") -> None:
                 <h2 style="margin: 0 0 1rem; font-size: 1.75rem; font-weight: 800; color: var(--text);">{title} Workspace</h2>
                 <p style="margin: 0 auto; max-width: 420px; font-size: 0.95rem; line-height: 1.6; color: var(--subtext);">
                     This space is reserved for Phase 3 advanced extensions. 
-                    CLARIO AI will connect specialized intelligence models to automate deep business recommendations here.
+                    Kosvio will connect specialized intelligence models to automate deep business recommendations here.
                 </p>
             </div>
             """

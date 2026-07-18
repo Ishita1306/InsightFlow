@@ -1,5 +1,5 @@
 """
-Reusable status badge component for CLARIO AI.
+Reusable status badge component for Kosvio.
 """
 
 import streamlit as st

@@ -4,7 +4,7 @@ from components.glass_card import glass_card_panel
 terms_html = """
 <div class="terms-scrollbox">
     <h3>1. Introduction</h3>
-    <p>CLARIO AI is an enterprise-grade, AI-powered Business Intelligence platform designed to help professionals and teams turn raw tabular datasets into structured, actionable business decisions. The platform provides a suite of advanced workspace tools, including:</p>
+    <p>Kosvio is an enterprise-grade, AI-powered Business Intelligence platform designed to help professionals and teams turn raw tabular datasets into structured, actionable business decisions. The platform provides a suite of advanced workspace tools, including:</p>
     <ul>
         <li><strong>Data Profiling</strong>: Comprehensive automated scanning of datasets to extract structural schemas, cardinality records, and statistics.</li>
         <li><strong>Data Cleaning</strong>: Heuristics for handling duplicates, missing fields, datatype conversions, and outliers.</li>
@@ -14,17 +14,17 @@ terms_html = """
         <li><strong>Forecasting</strong>: Advanced time-series projection engines with configurable confidence intervals and trend parameters.</li>
         <li><strong>Report Generation</strong>: Enterprise-ready executive exports available in PDF, PowerPoint, Excel, and PNG formats.</li>
     </ul>
-    <p>By accessing or using CLARIO AI, you explicitly agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, you must not access or use the application.</p>
+    <p>By accessing or using Kosvio, you explicitly agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, you must not access or use the application.</p>
 
     <h3>2. Purpose of Data Collection</h3>
-    <p>CLARIO AI processes datasets and user parameters solely to deliver requested business intelligence features. The scope of processing includes:</p>
+    <p>Kosvio processes datasets and user parameters solely to deliver requested business intelligence features. The scope of processing includes:</p>
     <ul>
         <li>Analyzing uploaded file buffers to construct profile reports.</li>
         <li>Executing cleansing operations to adjust tabular data in-session.</li>
         <li>Generating interactive charts, forecasts, and AI conversational responses.</li>
         <li>Producing downloadable reports and exports.</li>
     </ul>
-    <p>CLARIO AI operates under a strict data boundary. Under no circumstances will uploaded datasets, metadata, or queries be utilized for advertising, user tracking, marketing, resale, commercial profiling, or public distribution.</p>
+    <p>Kosvio operates under a strict data boundary. Under no circumstances will uploaded datasets, metadata, or queries be utilized for advertising, user tracking, marketing, resale, commercial profiling, or public distribution.</p>
 
     <h3>3. Data Privacy</h3>
     <p>We prioritize the privacy of your operational data:</p>
@@ -36,16 +36,16 @@ terms_html = """
     </ul>
 
     <h3>4. Data Security</h3>
-    <p>CLARIO AI enforces robust mechanisms to secure your data:</p>
+    <p>Kosvio enforces robust mechanisms to secure your data:</p>
     <ul>
         <li><strong>In-Memory Boundary</strong>: Uploaded datasets are loaded directly into active Streamlit memory (st.session_state) and are processed entirely in-session.</li>
         <li><strong>No Write Footprint</strong>: The application does not write or save uploaded files to local disk directories (such as /data, /database, /assets, or /exports) unless you explicitly trigger an export action.</li>
-        <li><strong>Immediate Cleanup</strong>: Any temporary files or metadata tables created during analytical parsing are deleted immediately after loading into your session DataFrame.</li>
+        <li><strong>Immediate Cleanup</strong>: Any temporary files or operational metadata tables created during analytical parsing are deleted immediately after loading into your session DataFrame.</li>
         <li><strong>Account Protection</strong>: Sensitive user credentials and passwords are encrypted and processed securely.</li>
     </ul>
 
     <h3>5. Data Retention</h3>
-    <p>CLARIO AI operates under a zero-retention session policy:</p>
+    <p>Kosvio operates under a zero-retention session policy:</p>
     <ul>
         <li><strong>Session Longevity</strong>: Uploaded datasets, cleaned outputs, cached profile charts, and AI chat histories exist only for the duration of your active session.</li>
         <li><strong>Secure Destruction</strong>: Logging out of your account or closing your browser session triggers the complete erasure of your workspace state.</li>
@@ -54,7 +54,7 @@ terms_html = """
     </ul>
 
     <h3>6. User Rights</h3>
-    <p>As a user of CLARIO AI, you possess full sovereignty over your workspace:</p>
+    <p>As a user of Kosvio, you possess full sovereignty over your workspace:</p>
     <ul>
         <li>The right to upload any compatible spreadsheet (CSV, Excel) into the workspace.</li>
         <li>The right to replace, overwrite, or update active datasets at any time.</li>
@@ -64,7 +64,7 @@ terms_html = """
     </ul>
 
     <h3>7. No Third-Party Sharing</h3>
-    <p>To maintain strict compliance with enterprise privacy standards, CLARIO AI does NOT:</p>
+    <p>To maintain strict compliance with enterprise privacy standards, Kosvio does NOT:</p>
     <ul>
         <li>Transmit or share uploaded files with any external cloud host or analytics vendor.</li>
         <li>Provide data access to advertisers, marketing trackers, or search engines.</li>
@@ -73,10 +73,10 @@ terms_html = """
     </ul>
 
     <h3>8. Limitation of Liability</h3>
-    <p>The analytics, time-series forecasts, and AI-generated insights provided by CLARIO AI are diagnostic tools designed to assist in business decision-making. They do not constitute certified financial, legal, or strategic business advice. CLARIO AI makes no guarantees regarding the accuracy or commercial viability of generated projections, and users remain solely responsible for validating critical business decisions prior to execution.</p>
+    <p>The analytics, time-series forecasts, and AI-generated insights provided by Kosvio are diagnostic tools designed to assist in business decision-making. They do not constitute certified financial, legal, or strategic business advice. Kosvio makes no guarantees regarding the accuracy or commercial viability of generated projections, and users remain solely responsible for validating critical business decisions prior to execution.</p>
 
     <h3>9. Changes to Terms</h3>
-    <p>We may update these Terms of Service and Privacy Policy as CLARIO AI evolves to support new features or regulatory requirements. Continued use of the application after such updates constitutes explicit acceptance of the revised Terms.</p>
+    <p>We may update these Terms of Service and Privacy Policy as Kosvio evolves to support new features or regulatory requirements. Continued use of the application after such updates constitutes explicit acceptance of the revised Terms.</p>
 
     <h3>10. Governing Law</h3>
     <p>These Terms of Service and Privacy Policy shall be governed by, interpreted, and construed in accordance with the laws of India, without regard to conflict of law principles.</p>
@@ -86,7 +86,7 @@ terms_html = """
     <p>
         <strong>Developer:</strong> Ishita Goswami<br>
         <strong>Email:</strong> ishitagoswami40@gmail.com<br>
-        <strong>Application:</strong> CLARIO AI
+        <strong>Application:</strong> Kosvio
     </p>
 </div>
 """

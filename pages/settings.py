@@ -17,25 +17,24 @@ def render() -> None:
         label="Configuration Center",
     )
 
-    user_info = st.session_state.get("user", {"email": "guest@clario.ai", "name": "Guest"})
-    current_theme = st.session_state.get("theme", "dark").capitalize()
+    user_info = st.session_state.get("user", {"email": "guest@kosvio.io", "name": "Guest"})
 
     col_left, col_right = st.columns(2, gap="large")
 
     with col_left:
         # 1. Profile Settings
-        st.markdown('<h4 style="margin-top: 1rem; font-weight: 700; color: var(--text);">Profile Settings</h4>', unsafe_allow_html=True)
+        st.markdown('<h4 style="margin: 1.5rem 0 0.75rem; font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em;">Profile Settings</h4>', unsafe_allow_html=True)
         with glass_card_panel():
-            st.markdown('<p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 1rem;">Personal Information</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-top: 0; margin-bottom: 1.25rem;">Personal Information</p>', unsafe_allow_html=True)
             st.text_input("Full Name", value=user_info["name"], key="settings_profile_name")
             st.text_input("Email Address", value=user_info["email"], key="settings_profile_email")
             if st.button("Save Changes", type="secondary", key="settings_save_profile"):
                 st.toast("Profile settings saved successfully.")
 
         # 2. Security Settings
-        st.markdown('<h4 style="margin-top: 2rem; font-weight: 700; color: var(--text);">Security</h4>', unsafe_allow_html=True)
+        st.markdown('<h4 style="margin: 2.25rem 0 0.75rem; font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em;">Security</h4>', unsafe_allow_html=True)
         with glass_card_panel():
-            st.markdown('<p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 1rem;">Update Password</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-top: 0; margin-bottom: 1.25rem;">Update Password</p>', unsafe_allow_html=True)
             st.text_input("New Password", type="password", placeholder="••••••••", key="settings_password_new")
             st.text_input("Confirm New Password", type="password", placeholder="••••••••", key="settings_password_confirm")
             if st.button("Update Password", type="secondary", key="settings_update_pass"):
@@ -43,28 +42,26 @@ def render() -> None:
 
     with col_right:
         # 3. Preferences & Theme
-        st.markdown('<h4 style="margin-top: 1rem; font-weight: 700; color: var(--text);">System Preferences</h4>', unsafe_allow_html=True)
+        st.markdown('<h4 style="margin: 1.5rem 0 0.75rem; font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em;">System Preferences</h4>', unsafe_allow_html=True)
         with glass_card_panel():
-            st.markdown('<p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-top: 0; margin-bottom: 1rem;">Preferences</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-top: 0; margin-bottom: 1.25rem;">Preferences</p>', unsafe_allow_html=True)
             st.selectbox("Data Region", ["US-East (Iowa)", "US-West (Oregon)", "EU-West (Belgium)"], key="settings_pref_region")
             st.checkbox("Auto-profile datasets upon upload", value=True, key="settings_pref_autoprofile")
             
-            st.markdown('<div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;"></div>', unsafe_allow_html=True)
             st.markdown(
-                f"""
-                <p style="font-size: 0.85rem; color: var(--subtext); margin-top: 0; margin-bottom: 0;">
-                    Interface Theme: <strong>{current_theme} Mode</strong><br>
-                    <span style="font-size: 0.75rem; opacity: 0.85;">Manage theme dynamically using the switch toggle in the top navigation bar.</span>
+                """
+                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; margin-bottom: 0;">
+                    Data Region governs the geographic container for AI-powered processing buffers. All uploaded data remains strictly within session memory.
                 </p>
                 """,
                 unsafe_allow_html=True
             )
 
     # 5. Session Management
-    st.markdown('<h4 style="margin-top: 2rem; font-weight: 700; color: var(--text);">Session Management</h4>', unsafe_allow_html=True)
+    st.markdown('<h4 style="margin: 2.25rem 0 0.75rem; font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em;">Session Management</h4>', unsafe_allow_html=True)
     with glass_card_panel():
-        st.markdown('<p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-top: 0;">Workspace & Account</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="font-size: 0.85rem; color: var(--subtext); margin-bottom: 1rem;">Logged in as: <strong>{user_info["name"]}</strong> ({user_info["email"]})</p>', unsafe_allow_html=True)
+        st.markdown('<p style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-top: 0; margin-bottom: 0.75rem;">Workspace & Account</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.25rem;">Logged in as: <strong>{user_info["name"]}</strong> ({user_info["email"]})</p>', unsafe_allow_html=True)
         
         col_actions = st.columns(2)
         with col_actions[0]:
