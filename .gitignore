@@ -59,3 +59,6 @@ database/auth_db.sqlite
 
 # Development testing
 pages/99_Gemini_Test.py
+
+# Streamlit cache
+.streamlit/cache/
