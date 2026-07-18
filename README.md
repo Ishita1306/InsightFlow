@@ -4,7 +4,7 @@
 
 Kosvio is an end-to-end Business Intelligence platform that enables users to upload datasets, clean and analyze data, build interactive dashboards, generate AI-powered insights, and create executive-ready reports—all through an intuitive web interface.
 
-🌐 **Live Demo:** https://clario-app.streamlit.app/
+🌐 **Live Demo:** https://kosvio-app.streamlit.app/
 
 ---
 
@@ -42,7 +42,7 @@ Kosvio is an end-to-end Business Intelligence platform that enables users to upl
 
 You can access the deployed application here:
 
-**https://clario-app.streamlit.app/**
+**https://kosvio-app.streamlit.app/**
 
 ---
 
@@ -107,13 +107,13 @@ Clario/
 Clone the repository
 
 ```bash
-git clone https://github.com/Ishita1306/Clario.git
+git clone https://github.com/Ishita1306/kosvio.git
 ```
 
 Move into the project directory
 
 ```bash
-cd Clario
+cd kosvio
 ```
 
 Create a virtual environment
