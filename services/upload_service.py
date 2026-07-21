@@ -7,9 +7,10 @@ Handles filesystem storage, file type validation, and pandas parsing for CSV and
 import os
 import pandas as pd
 from typing import Tuple
+from settings import UPLOAD_DIR
 
 class UploadService:
-    UPLOAD_DIR = "data/uploads"
+    UPLOAD_DIR = UPLOAD_DIR
 
     @classmethod
     def ensure_upload_dir(cls) -> None:
@@ -17,10 +18,10 @@ class UploadService:
         os.makedirs(cls.UPLOAD_DIR, exist_ok=True)
 
     @classmethod
-    def process_upload(cls, uploaded_file) -> Tuple[pd.DataFrame, str]:
+    def process_upload(cls, uploaded_file, progress_callback=None) -> Tuple[pd.DataFrame, str]:
         """
         Process the uploaded file completely in-memory:
-        1. Validate filename extension (CSV, XLSX)
+        1. Validate filename extension (CSV, XLSX, XLS)
         2. Read the file into a pandas DataFrame directly from memory buffer
         3. Validate that the dataset is not empty
         
@@ -33,13 +34,13 @@ class UploadService:
         filename = uploaded_file.name
         ext = os.path.splitext(filename.lower())[1]
         
-        if ext not in [".csv", ".xlsx"]:
-            raise ValueError(f"Unsupported file format '{ext}'. Only CSV and XLSX are supported.")
+        if ext not in [".csv", ".xlsx", ".xls"]:
+            raise ValueError(f"Unsupported file format '{ext}'. Only CSV, XLSX, and XLS are supported.")
             
         # Read the file using pandas directly from memory buffer, leveraging cached loader
         try:
             from analytics.data_loader import load_dataset
-            df = load_dataset(uploaded_file, filename)
+            df = load_dataset(uploaded_file, filename, progress_callback=progress_callback)
         except Exception as e:
             raise ValueError(f"Corrupted or invalid file. Could not parse tabular data: {str(e)}")
             

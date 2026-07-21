@@ -14,155 +14,13 @@ import plotly.graph_objects as go
 from components.section_header import render_section_header
 from components.empty_state import render_empty_state
 from components.glass_card import glass_card_panel
-
-
-def compile_excel_report(df: pd.DataFrame, summary: dict, audit: dict) -> bytes:
-    """Generate Excel workbook bytes using pandas Excel writer or CSV fallback."""
-    import io
-    output = io.BytesIO()
-    try:
-        # Create multiple data sheets for a premium Excel spreadsheet
-        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-            # Sheet 1: Executive Summary
-            summary_data = {
-                "Metric": ["Total Rows", "Total Columns", "Missing Cells", "Duplicate Rows", "Memory (Bytes)"],
-                "Value": [summary["rows"], summary["columns"], summary["missing_cells"], summary["duplicate_rows"], summary["memory_bytes"]]
-            }
-            pd.DataFrame(summary_data).to_excel(writer, sheet_name="Summary", index=False)
-            
-            # Sheet 2: Data Quality Issues
-            quality_data = {
-                "Quality Check": [
-                    "Missing Cells Count", "Duplicate Rows Count", "Empty Columns Count", 
-                    "Incorrect Datatypes", "Outliers Detected", "Constant Columns Count",
-                    "High Cardinality Columns", "Invalid Date Formats"
-                ],
-                "Count": [
-                    audit["missing_cells"], audit["duplicate_rows"], len(audit["empty_cols"]),
-                    len(audit["incorrect_cols"]), audit["outliers_count"], len(audit["constant_cols"]),
-                    len(audit["high_card_cols"]), sum(audit["invalid_date_cols"].values())
-                ]
-            }
-            pd.DataFrame(quality_data).to_excel(writer, sheet_name="Data Quality Audit", index=False)
-            
-            # Sheet 3: Dataset Sample
-            df.head(100).to_excel(writer, sheet_name="Data Sample", index=False)
-    except Exception:
-        # Fallback to standard CSV output if XlsxWriter is not installed
-        csv_str = df.head(100).to_csv(index=False)
-        return csv_str.encode("utf-8")
-        
-    return output.getvalue()
-
-
-def compile_pdf_document(filename: str, summary: dict, audit: dict, health_score: float) -> bytes:
-    """Generate a clean executive HTML report representing the PDF print output."""
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body {{ font-family: Arial, sans-serif; color: #333; line-height: 1.6; margin: 40px; }}
-            .header {{ border-bottom: 2px solid #6366F1; padding-bottom: 20px; margin-bottom: 30px; }}
-            .title {{ font-size: 24px; font-weight: bold; color: #111; margin: 0; }}
-            .subtitle {{ font-size: 14px; color: #666; margin: 5px 0 0; }}
-            .section {{ margin-bottom: 30px; }}
-            .section-title {{ font-size: 18px; font-weight: bold; color: #6366F1; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; }}
-            .grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }}
-            .card {{ background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; padding: 15px; text-align: center; }}
-            .card-val {{ font-size: 20px; font-weight: bold; color: #111; margin: 5px 0 0; }}
-            .card-lbl {{ font-size: 11px; color: #666; }}
-            .bullet {{ margin-bottom: 8px; }}
-            .footer {{ margin-top: 50px; font-size: 11px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }}
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <div class="title">Kosvio Executive Intelligence Report</div>
-            <div class="subtitle">Compiled profile and automated analytics for {filename}</div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">1. Executive Summary</div>
-            <p>This report documents the statistical profile and data quality audit of the dataset <strong>{filename}</strong>. The ingestion pipeline has successfully validated the structure, Classifications, and formatting parameters of the dataset. The overall data quality health score is rated at <strong>{health_score:.1f}/100</strong>.</p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">2. Ingested Data Metrics</div>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-lbl">Total Samples (Rows)</div>
-                    <div class="card-val">{summary['rows']:,}</div>
-                </div>
-                <div class="card">
-                    <div class="card-lbl">Measured Variables (Cols)</div>
-                    <div class="card-val">{summary['columns']}</div>
-                </div>
-                <div class="card">
-                    <div class="card-lbl">Data Completeness</div>
-                    <div class="card-val">{100.0 - summary['missing_pct']:.2f}%</div>
-                </div>
-                <div class="card">
-                    <div class="card-lbl">System Memory Size</div>
-                    <div class="card-val">{summary['memory_bytes'] / 1024:.1f} KB</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">3. Data Quality & Audit Results</div>
-            <div class="bullet"><strong>• Missing Values</strong>: Found {audit['missing_cells']:,} missing cells ({audit['missing_pct']:.1f}% of total data).</div>
-            <div class="bullet"><strong>• Duplicate Records</strong>: Found {audit['duplicate_rows']:,} duplicate rows.</div>
-            <div class="bullet"><strong>• Numerical Outliers</strong>: Identified {audit['outliers_count']:,} outliers lying beyond standard IQR thresholds.</div>
-            <div class="bullet"><strong>• Constant Columns</strong>: Dropped or flagged {len(audit['constant_cols'])} single-value variables.</div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">4. Strategic Recommendations</div>
-            <div class="bullet"><strong>• Imputation</strong>: Clean missing numeric fields with Median and categorical fields with Mode.</div>
-            <div class="bullet"><strong>• Deduplication</strong>: Remove duplicate records to prevent skewed distributions.</div>
-            <div class="bullet"><strong>• Scale Norms</strong>: Implement standard data types and date coercions.</div>
-        </div>
-
-        <div class="footer">
-            Report generated by Kosvio &copy; 2026. All rights reserved.
-        </div>
-    </body>
-    </html>
-    """
-    return html_content.encode("utf-8")
-
-
-def compile_powerpoint_briefing(filename: str, summary: dict, audit: dict, health_score: float) -> bytes:
-    """Generate a clean slides outline representation representing the PowerPoint briefing."""
-    briefing = f"""# Kosvio EXECUTIVE BRIEFING DECK: {filename}
-# Slide 1: Title Slide
-- Title: Kosvio Data Intelligence Briefing
-- Subtitle: Structural Analysis & Quality Profile for {filename}
-- Date: Compiled Workspace Session
-
-# Slide 2: Structural Dimensions
-- Title: Ingested Dataset Overview
-- Bullet 1: Total Processed Samples: {summary['rows']:,} rows
-- Bullet 3: Memory Footprint: {summary['memory_bytes'] / 1024:.1f} KB
-- Bullet 4: Active RAM footprint: {100.0 - summary['missing_pct']:.2f}% completeness
-
-# Slide 3: Data Quality Audit
-- Title: Anomalies & Data Integrity Check
-- Health Rating: {health_score:.1f}/100 Health Score
-- Bullet 1: Missing values count: {audit['missing_cells']:,} cells
-- Bullet 2: Redundant rows count: {audit['duplicate_rows']:,} duplicates
-- Bullet 3: Outliers detected: {audit['outliers_count']:,} values outside IQR
-- Bullet 4: Zero-entropy constant variables: {len(audit['constant_cols'])} columns
-
-# Slide 4: Actionable Recommendations
-- Title: Strategic Steps & Imputations
-- Recommendation 1: Perform deduplication and remove duplicate records.
-- Recommendation 2: Trim leading and trailing spaces from object columns.
-- Recommendation 3: Impute missing numerical cells with median values.
-- Recommendation 4: Standardize dates and datatype alignments.
-"""
-    return briefing.encode("utf-8")
+from services.reporting import (
+    compile_excel_report,
+    compile_pdf_document,
+    compile_powerpoint_briefing,
+    compile_docx_report,
+    compile_html_report,
+)
 
 
 def render() -> None:
@@ -189,12 +47,16 @@ def render() -> None:
     if st.session_state.get("cleaned_df") is not None:
         st.info("All insights and metrics are generated from the cleaned dataset.")
 
-    from services.dataset_service import DatasetService
+    from services.analytics import AnalyticsService as DatasetService
     from pages.upload import perform_advanced_audit, calculate_health_score
     profile = DatasetService.get_profile(df)
     summary = profile["summary"]
     audit = perform_advanced_audit(df)
     health = calculate_health_score(df)
+    
+    # Retrieve active forecast data if present
+    active_fore = st.session_state.get("active_forecast", {})
+    forecast_df = active_fore.get("df")
 
     # Inject CSS custom styling for premium enterprise BI look
     st.markdown(
@@ -368,36 +230,47 @@ def render() -> None:
             )
 
             st.markdown('<p style="font-size: 0.8rem; font-weight: 600; color: var(--subtext); margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.05em;">Export Actions</p>', unsafe_allow_html=True)
-            col_btn1, col_btn2, col_btn3 = st.columns(3)
+            col_btn1, col_btn2, col_btn3, col_btn4 = st.columns(4)
             with col_btn1:
+                pdf_bytes = compile_pdf_document(filename, summary, audit, health, forecast_df)
+                st.download_button(
+                    "📄 Export to PDF",
+                    data=pdf_bytes,
+                    file_name=f"kosvio_report_{filename.split('.')[0]}.html",
+                    mime="text/html",
+                    width="stretch",
+                    key="btn_exp_pdf",
+                    help="Downloads a print-optimized document which auto-triggers the print/PDF save dialog."
+                )
+            with col_btn2:
+                docx_bytes = compile_docx_report(filename, summary, audit, health, forecast_df)
+                st.download_button(
+                    "📝 Export to Word",
+                    data=docx_bytes,
+                    file_name=f"kosvio_briefing_{filename.split('.')[0]}.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    width="stretch",
+                    key="btn_exp_docx"
+                )
+            with col_btn3:
+                html_bytes = compile_html_report(filename, summary, audit, health, forecast_df)
+                st.download_button(
+                    "🌐 Export to HTML",
+                    data=html_bytes,
+                    file_name=f"kosvio_briefing_{filename.split('.')[0]}.html",
+                    mime="text/html",
+                    width="stretch",
+                    key="btn_exp_html"
+                )
+            with col_btn4:
                 excel_bytes = compile_excel_report(df, summary, audit)
                 st.download_button(
-                    "Export to Excel (.xlsx)",
+                    "📊 Export to Excel",
                     data=excel_bytes,
                     file_name=f"kosvio_briefing_{filename.split('.')[0]}.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     width="stretch",
                     key="btn_exp_xlsx"
-                )
-            with col_btn2:
-                pdf_bytes = compile_pdf_document(filename, summary, audit, health)
-                st.download_button(
-                    "Export to PDF (.pdf)",
-                    data=pdf_bytes,
-                    file_name=f"kosvio_report_{filename.split('.')[0]}.pdf",
-                    mime="application/pdf",
-                    width="stretch",
-                    key="btn_exp_pdf"
-                )
-            with col_btn3:
-                ppt_bytes = compile_powerpoint_briefing(filename, summary, audit, health)
-                st.download_button(
-                    "Export to PowerPoint (.pptx)",
-                    data=ppt_bytes,
-                    file_name=f"kosvio_presentation_{filename.split('.')[0]}.pptx",
-                    mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    width="stretch",
-                    key="btn_exp_pptx"
                 )
 
     with col_health:

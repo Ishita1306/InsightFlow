@@ -15,7 +15,7 @@ from components.empty_state import render_empty_state
 from components.metric_card import render_metric_card
 from components.table_container import render_table_container
 from components.glass_card import glass_card_panel
-from services.dataset_service import DatasetService
+from services.analytics import AnalyticsService as DatasetService
 
 
 def format_memory_size(bytes_size: int) -> str:
@@ -446,9 +446,9 @@ def calculate_health_score(df: pd.DataFrame) -> float:
 def render() -> None:
     """Render the upload workspace."""
     render_section_header(
-        title="Upload Dataset",
-        subtitle="Import your CSV or Excel spreadsheets to profile, clean, and analyze your business data.",
-        label="Data Workspace",
+        title="Upload Business File",
+        subtitle="Import datasets (CSV, Excel) or unstructured business documents (PDF, Word) for automatic AI routing and analysis.",
+        label="Universal Workspace",
     )
 
     # Privacy Notice
@@ -456,7 +456,7 @@ def render() -> None:
         """
         <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.5rem;">
             <p style="margin: 0; font-size: 0.82rem; color: var(--text); line-height: 1.5;">
-                🔒 <strong>Privacy Notice</strong>: Your uploaded datasets are processed only during your current session. 
+                🔒 <strong>Privacy Notice</strong>: Your uploaded files (datasets and documents) are processed only during your current session. 
                 Kosvio does not permanently store, share, or transmit your files. 
                 All uploaded data is removed when your session ends or you clear the workspace.
             </p>
@@ -482,9 +482,9 @@ def render() -> None:
         # File uploader workspace styled inside a card
         with st.container(border=True):
             uploaded_file = st.file_uploader(
-                "Choose a data file",
-                type=["csv", "xlsx", "xls"],
-                help="Supported formats: CSV, Excel (.xlsx, .xls). File size limits up to 200MB.",
+                "Choose a data or document file",
+                type=["csv", "xlsx", "xls", "pdf", "docx"],
+                help="Supported formats: CSV, Excel (.xlsx, .xls), PDF, Word (.docx). File size limits up to 200MB.",
                 label_visibility="collapsed",
             )
 
@@ -493,12 +493,14 @@ def render() -> None:
             st.markdown('<p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-top: 0;">Recent Uploads</p>', unsafe_allow_html=True)
             if st.session_state["recent_uploads"]:
                 for index, item in enumerate(st.session_state["recent_uploads"]):
+                    is_doc = item.get("is_doc", False)
+                    detail_str = "Document File" if is_doc else f"{item['rows']:,} rows &bull; {item['cols']} cols"
                     st.markdown(
                         f"""
                         <div class="glass-card" style="padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
                             <div>
                                 <p style="margin: 0; font-size: 0.85rem; font-weight: 500; color: var(--text);">{item['filename']}</p>
-                                <p style="margin: 0; font-size: 0.75rem; color: var(--subtext);">{item['rows']:,} rows &bull; {item['cols']} cols</p>
+                                <p style="margin: 0; font-size: 0.75rem; color: var(--subtext);">{detail_str}</p>
                             </div>
                             <span style="font-size: 0.72rem; color: var(--subtext);">{item['time']}</span>
                         </div>
@@ -512,62 +514,294 @@ def render() -> None:
     if uploaded_file is not None:
         file_key = (uploaded_file.name, uploaded_file.size)
         if st.session_state.get("last_processed_file") != file_key:
+            import os
+            import datetime
+            import time
+            ext = os.path.splitext(uploaded_file.name.lower())[1]
+            
             try:
-                # 1. Premium simulated progress bar
-                progress_bar = st.progress(0)
-                status_text = st.empty()
+                # Automatically detect file type and show animated classification card
+                is_doc = ext in [".pdf", ".docx"]
+                detected_type = "Business Document" if is_doc else "Dataset"
+                icon = "📄" if is_doc else "📊"
+                color_class = "doc" if is_doc else "data"
                 
-                stages = [
-                    (20, "Reading raw file bytes..."),
-                    (50, "Saving local file copy..."),
-                    (75, "Parsing tabular structure..."),
-                    (95, "Running data profiling audits..."),
-                    (100, "Finalizing Kosvio session state...")
-                ]
-                
-                for pct, msg in stages:
-                    import time
-                    status_text.markdown(f'<span style="font-size: 0.85rem; color: var(--subtext);">{msg}</span>', unsafe_allow_html=True)
-                    time.sleep(0.08)
-                    progress_bar.progress(pct)
-                
-                progress_bar.empty()
-                status_text.empty()
+                detection_placeholder = st.empty()
+                detection_placeholder.markdown(
+                    f"""
+                    <div class="detection-card glass-card">
+                        <div class="detection-icon-wrap {color_class}">
+                            {icon}
+                        </div>
+                        <div class="detection-meta">
+                            <span class="detection-tag">Detected File Type</span>
+                            <h3 class="detection-type">{detected_type}</h3>
+                            <p class="detection-name">{uploaded_file.name}</p>
+                        </div>
+                    </div>
+                    <div style="max-width: 550px; margin: -1.5rem auto 2.5rem; text-align: center;">
+                        <span style="font-size: 0.8rem; color: var(--subtext); opacity: 0.8; letter-spacing: 0.05em; text-transform: uppercase;">
+                            Routing to {detected_type} pipeline...
+                        </span>
+                    </div>
+                    <style>
+                    .detection-card {{
+                        display: flex;
+                        align-items: center;
+                        gap: 1.5rem;
+                        padding: 1.5rem 2rem !important;
+                        border-radius: 12px !important;
+                        background: rgba(255, 255, 255, 0.02) !important;
+                        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+                        max-width: 550px !important;
+                        margin: 2rem auto !important;
+                        animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                    }}
+                    .detection-icon-wrap {{
+                        width: 54px;
+                        height: 54px;
+                        border-radius: 10px;
+                        background: rgba(99, 102, 241, 0.1);
+                        color: #6366F1;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.5rem;
+                        box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+                    }}
+                    .detection-icon-wrap.doc {{
+                        background: rgba(139, 92, 246, 0.1);
+                        color: #a78bfa;
+                        box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+                    }}
+                    .detection-tag {{
+                        font-size: 0.72rem;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 0.08em;
+                        color: var(--subtext);
+                        opacity: 0.8;
+                    }}
+                    .detection-type {{
+                        margin: 0.1rem 0 !important;
+                        font-size: 1.3rem !important;
+                        font-weight: 750 !important;
+                        color: #FFFFFF !important;
+                    }}
+                    .detection-name {{
+                        margin: 0 !important;
+                        font-size: 0.82rem !important;
+                        color: var(--subtext) !important;
+                        word-break: break-all;
+                    }}
+                    @keyframes fadeInScale {{
+                        from {{ transform: scale(0.95); opacity: 0; }}
+                        to {{ transform: scale(1); opacity: 1; }}
+                    }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+                time.sleep(1.5) # Beautiful feedback delay
+                detection_placeholder.empty()
 
-                # Call the new UploadService to validate, save and parse the file
-                from services.upload_service import UploadService
-                df, saved_path = UploadService.process_upload(uploaded_file)
-                
-                st.session_state["dataset"] = df
-                st.session_state["original_df"] = df.copy()
-                st.session_state["dataset_filename"] = uploaded_file.name
-                st.session_state["last_processed_file"] = file_key
-                st.session_state.pop("cleaned_df", None)
-                st.session_state.pop("cleaning_summary", None)
-                st.session_state.pop("just_cleaned", None)
-                st.session_state.pop("dataset_health_score", None)
-                
-                # Append to recent uploads history
-                import datetime
-                recent_entry = {
-                    "filename": uploaded_file.name,
-                    "rows": len(df),
-                    "cols": len(df.columns),
-                    "time": datetime.datetime.now().strftime("%I:%M %p")
-                }
-                if uploaded_file.name not in [u["filename"] for u in st.session_state["recent_uploads"]]:
-                    st.session_state["recent_uploads"].append(recent_entry)
-                
-                st.rerun()
+                if is_doc:
+                    # Premium glowing document processing loader
+                    loader_placeholder = st.empty()
+                    loader_placeholder.markdown(
+                        """
+                        <div class="processing-card glass-card">
+                            <div class="processing-spinner"></div>
+                            <h3 class="processing-title">Processing Business Document</h3>
+                            <p class="processing-subtitle">Extracting semantic text, classifying components, and generating AI insights...</p>
+                        </div>
+                        <style>
+                        .processing-card {
+                            text-align: center;
+                            padding: 3rem 2rem !important;
+                            border-radius: 12px !important;
+                            background: rgba(255, 255, 255, 0.03) !important;
+                            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+                            backdrop-filter: blur(12px) !important;
+                            -webkit-backdrop-filter: blur(12px) !important;
+                            margin: 2rem auto !important;
+                            max-width: 500px !important;
+                            animation: pulse-glow 2s infinite ease-in-out;
+                        }
+                        .processing-spinner {
+                            width: 50px;
+                            height: 50px;
+                            margin: 0 auto 1.5rem;
+                            border: 3px solid rgba(139, 92, 246, 0.1);
+                            border-top: 3px solid #8B5CF6;
+                            border-radius: 50%;
+                            animation: spin-loader 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+                            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+                        }
+                        .processing-title {
+                            margin: 0 0 0.5rem !important; 
+                            font-size: 1.2rem !important; 
+                            font-weight: 700 !important; 
+                            color: #F3F4F6 !important;
+                        }
+                        .processing-subtitle {
+                            margin: 0 !important; 
+                            font-size: 0.85rem !important; 
+                            color: #9CA3AF !important; 
+                            line-height: 1.5 !important;
+                        }
+                        @keyframes spin-loader {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                        @keyframes pulse-glow {
+                            0%, 100% { box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1); }
+                            50% { box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.25); }
+                        }
+                        </style>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    
+                    from services.document_ai import (
+                        extract_text_from_pdf,
+                        extract_text_from_docx,
+                        extract_tables_from_docx,
+                        detect_charts_in_pdf,
+                        detect_charts_in_docx,
+                        analyze_document_text,
+                        validate_and_process_tables,
+                    )
+                    file_bytes = uploaded_file.read()
+                    
+                    docx_tables = []
+                    has_programmatic_charts = False
+                    
+                    if ext == ".pdf":
+                        text = extract_text_from_pdf(file_bytes)
+                        has_programmatic_charts = detect_charts_in_pdf(file_bytes)
+                        try:
+                            pdf_data = json.loads(text)
+                            pdf_tables = []
+                            for tbl in pdf_data.get("tables", []):
+                                grid = tbl.get("table_data", [])
+                                if grid:
+                                    pdf_tables.append(grid)
+                            docx_tables = validate_and_process_tables(pdf_tables)
+                        except Exception as e:
+                            pass
+                    else:
+                        text = extract_text_from_docx(file_bytes)
+                        raw_docx_tables = extract_tables_from_docx(file_bytes)
+                        docx_tables = validate_and_process_tables(raw_docx_tables)
+                        has_programmatic_charts = detect_charts_in_docx(file_bytes)
+                        
+                    analysis = analyze_document_text(text)
+                    
+                    st.session_state["document_text"] = text
+                    st.session_state["document_filename"] = uploaded_file.name
+                    st.session_state["document_analysis"] = analysis
+                    st.session_state["document_docx_tables"] = docx_tables
+                    st.session_state["document_has_charts"] = has_programmatic_charts
+                    st.session_state["last_processed_file"] = file_key
+                    
+                    # Clear active spreadsheet dataset if exists
+                    st.session_state.pop("dataset", None)
+                    st.session_state.pop("dataset_filename", None)
+                    
+                    # Store to recent uploads history
+                    recent_entry = {
+                        "filename": uploaded_file.name,
+                        "time": datetime.datetime.now().strftime("%I:%M %p"),
+                        "is_doc": True
+                    }
+                    if uploaded_file.name not in [u["filename"] for u in st.session_state["recent_uploads"]]:
+                        st.session_state["recent_uploads"].append(recent_entry)
+                        
+                    time.sleep(0.5) # Allow loader to render smoothly
+                    loader_placeholder.empty()
+                    
+                    # Route directly to the new document analysis tab
+                    st.session_state["current_page"] = "document_analysis"
+                    st.rerun()
+                    
+                else:
+                    # Real-time chunk-based progress bar for tabular datasets
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    start_time = time.time()
+                    last_update_time = [0.0]
+                    
+                    def progress_callback(bytes_read, total_size):
+                        current_time = time.time()
+                        if current_time - last_update_time[0] < 0.1 and bytes_read < total_size:
+                            return
+                        last_update_time[0] = current_time
+                        
+                        elapsed = current_time - start_time
+                        pct = min(1.0, bytes_read / total_size)
+                        speed = bytes_read / elapsed if elapsed > 0 else 0
+                        eta = (total_size - bytes_read) / speed if speed > 0 else 0
+                        
+                        progress_bar.progress(pct)
+                        speed_mb = speed / (1024 * 1024)
+                        status_text.markdown(
+                            f'<span style="font-size: 0.85rem; color: var(--subtext);">'
+                            f'Ingesting & Parsing Dataset... {pct*100:.1f}% &bull; '
+                            f'Speed: {speed_mb:.2f} MB/s &bull; '
+                            f'Remaining: {eta:.1f}s'
+                            f'</span>',
+                            unsafe_allow_html=True
+                        )
+                    
+                    # Call the UploadService to validate, save and parse the file in chunks
+                    from services.file_processing import FileProcessingService as UploadService
+                    df, saved_path = UploadService.process_upload(uploaded_file, progress_callback=progress_callback)
+                    
+                    progress_bar.empty()
+                    status_text.empty()
+                    
+                    st.session_state["dataset"] = df
+                    st.session_state["original_df"] = df.copy()
+                    st.session_state["dataset_filename"] = uploaded_file.name
+                    st.session_state["last_processed_file"] = file_key
+                    st.session_state.pop("cleaned_df", None)
+                    st.session_state.pop("cleaning_summary", None)
+                    st.session_state.pop("just_cleaned", None)
+                    st.session_state.pop("dataset_health_score", None)
+                    
+                    # Clear active document if exists
+                    st.session_state.pop("document_text", None)
+                    st.session_state.pop("document_filename", None)
+                    st.session_state.pop("document_analysis", None)
+                    
+                    # Append to recent uploads history
+                    recent_entry = {
+                        "filename": uploaded_file.name,
+                        "rows": len(df),
+                        "cols": len(df.columns),
+                        "time": datetime.datetime.now().strftime("%I:%M %p"),
+                        "is_doc": False
+                    }
+                    if uploaded_file.name not in [u["filename"] for u in st.session_state["recent_uploads"]]:
+                        st.session_state["recent_uploads"].append(recent_entry)
+                    
+                    st.rerun()
             except Exception as e:
                 # Reset state on failure to ensure clean error state
                 st.session_state.pop("dataset", None)
                 st.session_state.pop("dataset_filename", None)
+                st.session_state.pop("document_text", None)
+                st.session_state.pop("document_filename", None)
+                st.session_state.pop("document_analysis", None)
                 st.session_state["last_processed_file"] = None
                 st.markdown(
                     f"""
                     <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
-                        <h4 style="margin: 0 0 0.25rem; color: #EF4444; font-size: 0.95rem; font-weight: 600;">Invalid Dataset File</h4>
+                        <h4 style="margin: 0 0 0.25rem; color: #EF4444; font-size: 0.95rem; font-weight: 600;">Invalid File</h4>
                         <p style="margin: 0; color: var(--subtext); font-size: 0.82rem;">{str(e)}</p>
                     </div>
                     """,

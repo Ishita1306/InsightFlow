@@ -13,7 +13,7 @@ from components.empty_state import render_empty_state
 from components.animated_counter import render_kpi_grid
 from components.dataset_explorer import render_dataset_explorer
 from components.glass_card import glass_card_panel
-from services.dataset_service import DatasetService
+from services.analytics import AnalyticsService as DatasetService
 
 
 def render() -> None:

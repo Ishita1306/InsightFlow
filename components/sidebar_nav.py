@@ -125,6 +125,7 @@ PAGE_LABELS: dict[str, str] = {
     for section in NAV_SECTIONS
     for item in section.items
 }
+PAGE_LABELS["document_analysis"] = "Doc Analysis"
 
 
 def get_page_label(page_key: str) -> Optional[str]:

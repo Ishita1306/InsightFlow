@@ -1,13 +1,18 @@
 """
-InsightFlow application entry point.
+Kosvio AI Business Intelligence Platform entry point.
 
-This module configures the Streamlit runtime and renders the landing page.
-Business logic and feature modules are intentionally excluded at this stage.
+This module configures the Streamlit runtime, renders the landing page,
+and routes user page workspace navigation.
 """
 
 import streamlit as st
+
+# Decrypt and load environment variables early before importing project components
+from utils.crypto import decrypt_file_to_env
+decrypt_file_to_env()
+
 from components.sidebar_nav import render_sidebar_branding, render_sidebar_navigation
-from pages import dashboard, upload, overview, visual_analytics, ai_insights, forecasting, reports, settings
+from pages import dashboard, upload, overview, visual_analytics, ai_insights, forecasting, reports, settings, document_analysis
 from utils.theme_manager import inject_theme_css
 
 
@@ -55,15 +60,15 @@ def render_hero():
                 <div class="hero-content">
                     <span class="hero-badge">
                         <svg class="hero-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: middle;"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                        Human-Centered Business Intelligence
+                        Next-Gen AI Business Intelligence Platform
                     </span>
                     <h1 class="hero-title">Kosvio</h1>
                     <p class="hero-headline">
-                        Every person has their own universe.<br>Every dataset has its own story.
+                        Every leader has a vision.<br>Every business file has its own story.
                     </p>
                     <p class="hero-description">
-                        Transform raw business data into interactive dashboards,
-                        AI-powered insights, predictive forecasts, and executive-ready reports.
+                        Instantly turn raw datasets and unstructured business documents (PDFs, Word files) 
+                        into interactive dashboards, predictive forecasts, AI insights, and board-ready executive reports.
                     </p>
                 </div>
                 """,
@@ -94,7 +99,7 @@ def render_hero():
                             <span class="dash-dot yellow"></span>
                             <span class="dash-dot green"></span>
                             <span class="dash-topbar-title">
-                                Kosvio Analytics
+                                Kosvio Intelligence Hub
                             </span>
                         </div>
                         <div class="dash-body">
@@ -106,7 +111,7 @@ def render_hero():
                             </div>
                             <div class="dash-main">
                                 <div class="dash-widget">
-                                    <div class="dash-widget-label">Revenue</div>
+                                    <div class="dash-widget-label">Quarterly Revenue</div>
                                     <div class="dash-kpi-row">
                                         <div class="dash-kpi">
                                             <div class="dash-kpi-val">$2.4M</div>
@@ -119,7 +124,7 @@ def render_hero():
                                     </div>
                                 </div>
                                 <div class="dash-widget">
-                                    <div class="dash-widget-label">Pipeline</div>
+                                    <div class="dash-widget-label">Pipeline Health</div>
                                     <div class="dash-bars">
                                         <div class="dash-bar" style="height:55%"></div>
                                         <div class="dash-bar" style="height:80%"></div>
@@ -130,7 +135,7 @@ def render_hero():
                                 </div>
                                 <div class="dash-widget wide">
                                     <div class="dash-widget-label">
-                                        Performance Trend
+                                        Performance Forecast Trend
                                     </div>
                                     <div class="dash-line-chart">
                                         <svg viewBox="0 0 200 48" preserveAspectRatio="none">
@@ -144,21 +149,21 @@ def render_hero():
                                                 points="0,40 30,32 60,36 90,18 120,24 150,10 180,14 200,6 200,48 0,48"
                                                 fill="url(#grad)"
                                                 opacity="0.25"
-                                            />
-                                            <defs>
-                                                <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="0%" stop-color="#7C3AED"/>
-                                                    <stop offset="100%" stop-color="transparent"/>
-                                                </linearGradient>
-                                            </defs>
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                """,
+                                              />
+                                              <defs>
+                                                  <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                                                      <stop offset="0%" stop-color="#7C3AED"/>
+                                                      <stop offset="100%" stop-color="transparent"/>
+                                                  </linearGradient>
+                                              </defs>
+                                          </svg>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  """,
                 unsafe_allow_html=True
             )
 
@@ -225,10 +230,10 @@ def render_workflow():
         <section class="page-section workflow-section">
             <div class="section-header center">
                 <span class="section-label">Pipeline</span>
-                <h2 class="section-title">From raw data to intelligence</h2>
+                <h2 class="section-title">From raw assets to business intelligence</h2>
                 <p class="section-subtitle">
-                    A refined five-stage pipeline that transforms CSV exports
-                    into executive-ready insights — seamlessly and at scale.
+                    A refined five-stage pipeline that transforms datasets and reports
+                    into strategic insights — seamlessly and at scale.
                 </p>
             </div>
             <div class="timeline">
@@ -238,31 +243,31 @@ def render_workflow():
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M12 16V4M12 16l-4-4M12 16l4-4M4 20h16"/></svg>
                     </div>
-                    <h4>Upload CSV</h4>
-                    <p>Import datasets instantly</p>
+                    <h4>Universal Ingestion</h4>
+                    <p>CSV, Excel, PDF, or Word</p>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">02</span>
                     <div class="timeline-node icon-box lg">
-                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 2v2M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
                     </div>
-                    <h4>Clean Data</h4>
-                    <p>Normalize and validate</p>
+                    <h4>AI Routing & Parsing</h4>
+                    <p>Classify and extract data</p>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">03</span>
                     <div class="timeline-node icon-box lg">
-                        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 3 5-8"/></svg>
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     </div>
-                    <h4>Analyze</h4>
-                    <p>Surface key metrics</p>
+                    <h4>Interactive Visuals</h4>
+                    <p>KPIs and chart dashboards</p>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">04</span>
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </div>
-                    <h4>Forecast</h4>
+                    <h4>Forecast Outcomes</h4>
                     <p>Predict revenue trends</p>
                 </div>
                 <div class="timeline-step">
@@ -270,8 +275,8 @@ def render_workflow():
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
                     </div>
-                    <h4>Generate Reports</h4>
-                    <p>Export executive PDFs</p>
+                    <h4>Executive Reports</h4>
+                    <p>Polished briefs and tables</p>
                 </div>
             </div>
         </section>
@@ -287,56 +292,78 @@ def render_features():
         <section class="page-section">
             <div class="section-header">
                 <span class="section-label">Capabilities</span>
-                <h2 class="section-title">Built for modern revenue teams</h2>
+                <h2 class="section-title">Built for modern enterprise intelligence</h2>
                 <p class="section-subtitle">
-                    Every module engineered for clarity, performance, and
-                    the precision enterprise leaders demand.
+                    Six core modules engineered for clarity, performance, and the deep
+                    strategic insights required by modern business leaders.
                 </p>
             </div>
-            <div class="feature-grid">
+            <div class="feature-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
                 <div class="feature-card glass-card">
                     <div class="icon-wrap icon-box">
                         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     </div>
-                    <h3>Interactive Dashboards</h3>
+                    <h3>Analyze Datasets</h3>
                     <p>
-                        Real-time, filterable views of KPIs, trends, and
-                        team performance — designed for decision-makers.
+                        Import and profile enterprise datasets to audit file health, identify missing columns, 
+                        and standardize data structures.
                     </p>
-                    <span class="feature-tag">Live Data</span>
+                    <span class="feature-tag">Tabular Data</span>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="icon-wrap icon-box">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+                    </div>
+                    <h3>Analyze Business Reports</h3>
+                    <p>
+                        Extract semantic text, structured data tables, and embedded images programmatically 
+                        from PDF and DOCX reports.
+                    </p>
+                    <span class="feature-tag">Unstructured Documents</span>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="icon-wrap icon-box">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    </div>
+                    <h3>Generate Executive Summaries</h3>
+                    <p>
+                        Instantly compile dense, multi-page business files into concise 2-3 sentence executive summaries 
+                        and strategic briefs.
+                    </p>
+                    <span class="feature-tag">AI Summarization</span>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="icon-wrap icon-box">
                         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 3 5-8"/></svg>
                     </div>
-                    <h3>Sales Forecasting</h3>
+                    <h3>Forecast Sales</h3>
                     <p>
-                        Project pipeline outcomes and revenue with validated
-                        models built on historical signals.
+                        Project pipeline metrics, historical revenue trends, and growth forecasts using validated 
+                        predictive modeling.
                     </p>
-                    <span class="feature-tag">Predictive</span>
+                    <span class="feature-tag">Predictive Analytics</span>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="icon-wrap icon-box">
                         <svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.4V12h4a2 2 0 0 1 2 2v1h-2v5H8v-5H6v-1a2 2 0 0 1 2-2h4V9.4A4 4 0 0 1 12 2z"/></svg>
                     </div>
-                    <h3>AI Business Insights</h3>
+                    <h3>Create AI Insights</h3>
                     <p>
-                        Uncover hidden patterns and receive actionable
-                        recommendations from complex datasets.
+                        Identify latent opportunities, project strategic risk warnings, and map key entity relationships 
+                        automatically.
                     </p>
-                    <span class="feature-tag">Intelligent</span>
+                    <span class="feature-tag">Strategic Advice</span>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="icon-wrap icon-box">
                         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
                     </div>
-                    <h3>PDF Executive Reports</h3>
+                    <h3>Produce Business-Ready Reports</h3>
                     <p>
-                        Generate polished, board-ready documents that
-                        communicate results with clarity and impact.
+                        Compile strategic summaries, key metrics, and charts into polished, board-ready 
+                        PDF files.
                     </p>
-                    <span class="feature-tag">Export Ready</span>
+                    <span class="feature-tag">PDF Export</span>
                 </div>
             </div>
         </section>
@@ -346,7 +373,7 @@ def render_features():
 
 
 def render_why():
-    """Render the 'Why CLARIO?' value proposition section."""
+    """Render the 'Why Kosvio?' value proposition section."""
     st.markdown(
         """
         <section class="page-section why-section">
@@ -621,6 +648,8 @@ def main():
         reports.render()
     elif current_page == "settings":
         settings.render()
+    elif current_page == "document_analysis":
+        document_analysis.render()
 
     # Inject JS Sidebar Auto-Collapse & Default Collapse Helper
     import streamlit.components.v1 as components

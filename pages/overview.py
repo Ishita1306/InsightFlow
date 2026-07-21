@@ -15,7 +15,7 @@ from components.section_header import render_section_header
 from components.empty_state import render_empty_state
 from components.metric_card import render_metric_card
 from components.table_container import render_table_container
-from services.dataset_service import DatasetService
+from services.analytics import AnalyticsService as DatasetService
 from pages.upload import perform_advanced_audit, calculate_health_score
 
 

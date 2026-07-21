@@ -42,7 +42,7 @@ def render() -> None:
         st.info("All insights and metrics are generated from the cleaned dataset.")
 
     # 1. Metric stats & quality audits
-    from services.dataset_service import DatasetService
+    from services.analytics import AnalyticsService as DatasetService
     from pages.upload import perform_advanced_audit
     profile = DatasetService.get_profile(df)
     summary = profile["summary"]
