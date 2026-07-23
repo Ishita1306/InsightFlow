@@ -2296,7 +2296,7 @@ def generate_rewritten_summary(sections: list, findings: list, risks: list, recs
         kpis = extract_high_value_kpis(sections)
         kpi_vals = [k["value"] for k in kpis if k["label"] in ["Revenue", "Net Income", "Gross Margin"]]
         if kpi_vals:
-            fin_text = f"The financial direction shows strong execution, supported by key metrics of {" and ".join(kpi_vals[:2])}."
+            fin_text = f"The financial direction shows strong execution, supported by key metrics of {' and '.join(kpi_vals[:2])}."
 
     # 3. Growth Drivers
     growth_text = "Growth is primarily driven by expanding digital capabilities, scaling enterprise subscription models, and optimizing commercial delivery channels."

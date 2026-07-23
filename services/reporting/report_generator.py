@@ -70,6 +70,10 @@ def generate_svg_line_chart(forecast_df: pd.DataFrame) -> str:
             poly_points.append(f"{x},{y}")
         conf_path = f"M {poly_points[0]} L " + " L ".join(poly_points[1:]) + " Z"
         
+    conf_path_html = f'<path d="{conf_path}" fill="rgba(99, 102, 241, 0.08)" stroke="none" />' if conf_path else ''
+    hist_path_html = f'<path d="{hist_path}" fill="none" stroke="#06B6D4" stroke-width="2" />' if hist_path else ''
+    fore_path_html = f'<path d="{fore_path}" fill="none" stroke="#6366F1" stroke-width="2" stroke-dasharray="4,4" />' if fore_path else ''
+
     svg_str = f"""
     <svg viewBox="0 0 {width} {height}" width="100%" height="{height}" style="background: rgba(255,255,255,0.01); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-top: 10px;">
         <!-- Grid Lines -->
@@ -78,13 +82,13 @@ def generate_svg_line_chart(forecast_df: pd.DataFrame) -> str:
         <line x1="{padding}" y1="{height-padding}" x2="{width-padding}" y2="{height-padding}" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
         
         <!-- Confidence Band -->
-        {f'<path d="{conf_path}" fill="rgba(99, 102, 241, 0.08)" stroke="none" />' if conf_path else ''}
+        {conf_path_html}
         
         <!-- Historical Line -->
-        {f'<path d="{hist_path}" fill="none" stroke="#06B6D4" stroke-width="2" />' if hist_path else ''}
+        {hist_path_html}
         
         <!-- Forecast Line -->
-        {f'<path d="{fore_path}" fill="none" stroke="#6366F1" stroke-width="2" stroke-dasharray="4,4" />' if fore_path else ''}
+        {fore_path_html}
     </svg>
     """
     return svg_str
@@ -136,14 +140,39 @@ def compile_pdf_document(filename: str, summary: dict, audit: dict, health_score
         for _, r in forecast_only.iterrows():
             forecast_rows += f"""
             <tr>
-                <td>{str(r["Timeline"])[:10]}</td>
-                <td>{r["Forecast"]:.4f}</td>
-                <td>{r["Lower Bound"]:.4f}</td>
-                <td>{r["Upper Bound"]:.4f}</td>
+                <td>{str(r['Timeline'])[:10]}</td>
+                <td>{r['Forecast']:.4f}</td>
+                <td>{r['Lower Bound']:.4f}</td>
+                <td>{r['Upper Bound']:.4f}</td>
             </tr>
             """
     else:
         forecast_rows = "<tr><td colspan='4' style='text-align: center; color: #666;'>No active forecast data computed for this session.</td></tr>"
+
+    forecast_block = ""
+    if forecast_df is not None and not forecast_df.empty:
+        forecast_block = f"""
+        <div class="section page-break">
+            <div class="section-title">5. Time-Series Projections & Forecast</div>
+            <p>The chart below displays historical trends mapped alongside 95% confidence projections computed for the forecasting horizon:</p>
+            {svg_chart}
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase;">Forecast Timeline Projections</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timeline</th>
+                        <th>Projected Value</th>
+                        <th>Lower Bound (95%)</th>
+                        <th>Upper Bound (95%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {forecast_rows}
+                </tbody>
+            </table>
+        </div>
+        """
 
     html_content = f"""
     <!DOCTYPE html>
@@ -153,42 +182,60 @@ def compile_pdf_document(filename: str, summary: dict, audit: dict, health_score
         <title>Kosvio Executive Intelligence Report - {filename}</title>
         <style>
             @media print {{
-                body {{ margin: 0; background: #fff; color: #000; font-size: 11pt; }}
-                .no-print {{ display: none; }}
                 .page-break {{ page-break-before: always; }}
             }}
             body {{
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
                 color: #2D3748;
                 line-height: 1.6;
-                margin: 40px auto;
-                max-width: 800px;
-                background: #FFFFFF;
-                padding: 0 20px;
+                padding: 30px;
+                background-color: #FFFFFF;
             }}
             .header {{
-                border-bottom: 3px solid #6366F1;
-                padding-bottom: 20px;
-                margin-bottom: 30px;
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-end;
+                align-items: center;
+                border-bottom: 2px solid #E2E8F0;
+                padding-bottom: 15px;
+                margin-bottom: 30px;
             }}
-            .logo-area {{ text-align: left; }}
-            .logo-main {{ font-size: 26px; font-weight: 800; color: #1A202C; letter-spacing: -0.03em; }}
-            .logo-sub {{ font-size: 11px; text-transform: uppercase; color: #6366F1; font-weight: 700; letter-spacing: 0.1em; margin-top: 2px; }}
-            .doc-meta {{ text-align: right; font-size: 12px; color: #718096; }}
-            .title {{ font-size: 24px; font-weight: 700; color: #1A202C; margin-top: 20px; margin-bottom: 10px; }}
-            .section {{ margin-bottom: 35px; }}
+            .logo-main {{
+                font-size: 24px;
+                font-weight: 800;
+                color: #1A202C;
+                letter-spacing: -0.02em;
+            }}
+            .logo-sub {{
+                font-size: 9px;
+                text-transform: uppercase;
+                color: #4F46E5;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+            }}
+            .doc-meta {{
+                text-align: right;
+                font-size: 11px;
+                color: #718096;
+            }}
+            .title {{
+                font-size: 26px;
+                font-weight: 800;
+                color: #1A202C;
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }}
+            .section {{
+                margin-top: 30px;
+                margin-bottom: 30px;
+            }}
             .section-title {{
-                font-size: 16px;
+                font-size: 14px;
                 font-weight: 700;
                 text-transform: uppercase;
                 color: #4F46E5;
                 border-bottom: 1px solid #E2E8F0;
-                padding-bottom: 6px;
+                padding-bottom: 5px;
                 margin-bottom: 15px;
-                letter-spacing: 0.05em;
             }}
             .grid {{
                 display: grid;
@@ -310,28 +357,7 @@ def compile_pdf_document(filename: str, summary: dict, audit: dict, health_score
             <div class="bullet"><strong>• Dimensional Alignment:</strong> Cast variables with mismatched types to appropriate date/categorical representations.</div>
         </div>
 
-        {f'''
-        <div class="section page-break">
-            <div class="section-title">5. Time-Series Projections & Forecast</div>
-            <p>The chart below displays historical trends mapped alongside 95% confidence projections computed for the forecasting horizon:</p>
-            {svg_chart}
-            
-            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase;">Forecast Timeline Projections</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Timeline</th>
-                        <th>Projected Value</th>
-                        <th>Lower Bound (95%)</th>
-                        <th>Upper Bound (95%)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {forecast_rows}
-                </tbody>
-            </table>
-        </div>
-        ''' if forecast_df is not None and not forecast_df.empty else ''}
+        {forecast_block}
 
         <div class="footer">
             Confidential Document &copy; 2026 Kosvio AI Business Intelligence Platform. Compiled via in-memory sessions.
@@ -467,14 +493,40 @@ def compile_html_report(filename: str, summary: dict, audit: dict, health_score:
         for _, r in forecast_only.iterrows():
             forecast_rows += f"""
             <tr>
-                <td>{str(r["Timeline"])[:10]}</td>
-                <td style="color: #6366F1; font-weight: 600;">{r["Forecast"]:.4f}</td>
-                <td>{r["Lower Bound"]:.4f}</td>
-                <td>{r["Upper Bound"]:.4f}</td>
+                <td>{str(r['Timeline'])[:10]}</td>
+                <td style="color: #6366F1; font-weight: 600;">{r['Forecast']:.4f}</td>
+                <td>{r['Lower Bound']:.4f}</td>
+                <td>{r['Upper Bound']:.4f}</td>
             </tr>
             """
     else:
         forecast_rows = "<tr><td colspan='4' style='text-align: center; color: var(--subtext);'>No active forecast data computed for this session. Run a forecast in the workspace first.</td></tr>"
+
+    forecast_block = ""
+    if forecast_df is not None and not forecast_df.empty:
+        forecast_block = f"""
+            <div class="glass-card">
+                <div class="section-title">4. Time-Series Projections & Predictions</div>
+                <p style="font-size: 13px; color: var(--subtext); margin-bottom: 20px;">The interactive vector chart below tracks historical actuals alongside the 95% confidence forecasting projections:</p>
+                
+                {svg_chart}
+
+                <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 12px; text-transform: uppercase; color: var(--text); letter-spacing: 0.05em;">Timeline Horizon Forecast</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timeline</th>
+                            <th>Projected Value</th>
+                            <th>Lower Bound (95%)</th>
+                            <th>Upper Bound (95%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {forecast_rows}
+                    </tbody>
+                </table>
+            </div>
+        """
 
     html_content = f"""
     <!DOCTYPE html>
@@ -687,29 +739,7 @@ def compile_html_report(filename: str, summary: dict, audit: dict, health_score:
                 <div class="bullet"><strong>• Datatype Inconsistencies:</strong> {len(audit['incorrect_cols'])} columns contain datatype inconsistencies. Align formats for accurate timelines.</div>
             </div>
 
-            {f'''
-            <div class="glass-card">
-                <div class="section-title">4. Time-Series Projections & Predictions</div>
-                <p style="font-size: 13px; color: var(--subtext); margin-bottom: 20px;">The interactive vector chart below tracks historical actuals alongside the 95% confidence forecasting projections:</p>
-                
-                {svg_chart}
-
-                <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 12px; text-transform: uppercase; color: var(--text); letter-spacing: 0.05em;">Timeline Horizon Forecast</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Timeline</th>
-                            <th>Projected Value</th>
-                            <th>Lower Bound (95%)</th>
-                            <th>Upper Bound (95%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {forecast_rows}
-                    </tbody>
-                </table>
-            </div>
-            ''' if forecast_df is not None and not forecast_df.empty else ''}
+            {forecast_block}
 
             <div class="footer">
                 Kosvio AI Business Intelligence Platform &copy; 2026. All rights reserved. Confidential.

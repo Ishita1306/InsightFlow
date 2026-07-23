@@ -648,8 +648,8 @@ footer { visibility: hidden; }
 /* ── Features ───────────────────────────────────────── */
 .feature-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
 }
 
 .feature-card {
@@ -657,6 +657,9 @@ footer { visibility: hidden; }
     border-radius: 14px;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .feature-card::before {
@@ -692,6 +695,7 @@ footer { visibility: hidden; }
     font-size: 0.85rem;
     line-height: 1.65;
     color: var(--subtext);
+    flex-grow: 1;
 }
 
 .feature-tag {
@@ -704,6 +708,7 @@ footer { visibility: hidden; }
     color: var(--secondary);
     background: rgba(139, 92, 246, 0.1);
     border-radius: 6px;
+    align-self: flex-start;
 }
 
 /* ── Why section ──────────────────────────────────────── */
@@ -730,6 +735,9 @@ footer { visibility: hidden; }
     padding: 2rem 1.5rem;
     border-radius: 14px;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .why-card h3 {
@@ -744,6 +752,7 @@ footer { visibility: hidden; }
     font-size: 0.85rem;
     line-height: 1.65;
     color: var(--subtext);
+    flex-grow: 1;
 }
 
 /* ── Tech stack ───────────────────────────────────────── */
@@ -1734,7 +1743,7 @@ div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .h
 
 @media (max-width: 991px) {
     div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .hero-section-marker) > div[data-testid="stHorizontalBlock"] {
-        grid-template-columns: 1fr !important;
+        flex-direction: column !important;
         gap: 3rem !important;
     }
 }

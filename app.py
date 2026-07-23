@@ -243,40 +243,50 @@ def render_workflow():
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M12 16V4M12 16l-4-4M12 16l4-4M4 20h16"/></svg>
                     </div>
-                    <h4>Universal Ingestion</h4>
-                    <p>CSV, Excel, PDF, or Word</p>
+                    <div class="timeline-text">
+                        <h4>Universal Ingestion</h4>
+                        <p>CSV, Excel, PDF, or Word</p>
+                    </div>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">02</span>
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M12 2v2M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
                     </div>
-                    <h4>AI Routing & Parsing</h4>
-                    <p>Classify and extract data</p>
+                    <div class="timeline-text">
+                        <h4>AI Routing & Parsing</h4>
+                        <p>Classify and extract data</p>
+                    </div>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">03</span>
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     </div>
-                    <h4>Interactive Visuals</h4>
-                    <p>KPIs and chart dashboards</p>
+                    <div class="timeline-text">
+                        <h4>Interactive Visuals</h4>
+                        <p>KPIs and chart dashboards</p>
+                    </div>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">04</span>
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </div>
-                    <h4>Forecast Outcomes</h4>
-                    <p>Predict revenue trends</p>
+                    <div class="timeline-text">
+                        <h4>Forecast Outcomes</h4>
+                        <p>Predict revenue trends</p>
+                    </div>
                 </div>
                 <div class="timeline-step">
                     <span class="timeline-index">05</span>
                     <div class="timeline-node icon-box lg">
                         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
                     </div>
-                    <h4>Executive Reports</h4>
-                    <p>Polished briefs and tables</p>
+                    <div class="timeline-text">
+                        <h4>Executive Reports</h4>
+                        <p>Polished briefs and tables</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -290,7 +300,7 @@ def render_features():
     st.markdown(
         """
         <section class="page-section">
-            <div class="section-header">
+            <div class="section-header center">
                 <span class="section-label">Capabilities</span>
                 <h2 class="section-title">Built for modern enterprise intelligence</h2>
                 <p class="section-subtitle">
@@ -298,7 +308,7 @@ def render_features():
                     strategic insights required by modern business leaders.
                 </p>
             </div>
-            <div class="feature-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+            <div class="feature-grid">
                 <div class="feature-card glass-card">
                     <div class="icon-wrap icon-box">
                         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
